@@ -10,4 +10,5 @@
         <maven.compiler.release>24</maven.compiler.release>
         <exec.mainClass>com.mycompany.civicloop.CivicLoop</exec.mainClass>
     </properties>
+    <name>CivicLoop-Project-FIle</name>
 </project>
