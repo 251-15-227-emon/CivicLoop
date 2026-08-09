@@ -122,3 +122,14 @@ JLabel lblPass = new JLabel("Password:");
     }
     
     // Save data when the whole application window closes
+
+    @Override
+    public void dispose() {
+        try {
+            dataStore.saveToFile("civicloop_data.dat");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Could not save data: " + ex.getMessage());
+        }
+        super.dispose();
+    }
+}
