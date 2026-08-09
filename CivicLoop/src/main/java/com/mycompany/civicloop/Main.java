@@ -1,0 +1,12 @@
+package com.mycompany.civicloop;
+
+import civicloop.gui.LoginFrame;
+import javax.swing.SwingUtilities;
+
+public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new LoginFrame().setVisible(true);
+        });
+    }
+}
