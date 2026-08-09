@@ -39,6 +39,18 @@ private String postId;
     }
 
 
+     public void addLike() { likes++; }
+    public void addComment(String comment) { comments.add(comment); }
+
+    // Getters
+    public String getPostId() { return postId; }
+    public String getAuthorId() { return authorId; }
+    public String getContent() { return content; }
+    public String getTimestamp() { return timestamp; }
+    public int getLikes() { return likes; }
+    public ArrayList<String> getComments() { return comments; }
+
+
 
 
 }
