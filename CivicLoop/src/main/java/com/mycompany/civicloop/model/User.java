@@ -28,6 +28,10 @@ public class User implements Serializable {
         this.timeCreditBalance = 0.0;
     }
 
+    public boolean checkPassword(String attempt) {
+        return this.password.equals(attempt);
+    }
+
 
 
 
