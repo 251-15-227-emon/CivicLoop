@@ -23,7 +23,10 @@ public class Service implements Creditable, Serializable {
         return 1.0;   // 1 hour of active work = 1 TimeCredit
     }
 
-
+    @Override
+    public String getOfferType() {
+        return "Service";
+    }
 
 
 }
