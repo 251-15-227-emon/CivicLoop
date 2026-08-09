@@ -11,6 +11,13 @@ public class Service implements Creditable, Serializable {
     private boolean isAvailable;  
 
 
+    public Service(String serviceType, String providerId) {
+        this.serviceId = UUID.randomUUID().toString().substring(0, 8);
+        this.serviceType = serviceType;
+        this.providerId = providerId;
+        this.isAvailable = true;
+    }
+
 
 }
 
