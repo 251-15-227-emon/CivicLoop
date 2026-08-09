@@ -40,3 +40,17 @@ public class LoginFrame extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5,5,5,5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        JLabel lblId = new JLabel("User ID:");
+        gbc.gridx=0; gbc.gridy=0; panel.add(lblId, gbc);
+        userIdField = new JTextField(10);
+        gbc.gridx=1; panel.add(userIdField, gbc);
+
+        JLabel lblPass = new JLabel("Password:");
+        gbc.gridx=0; gbc.gridy=1; panel.add(lblPass, gbc);
+        passwordField = new JPasswordField(10);
+        gbc.gridx=1; panel.add(passwordField, gbc);
+
+        JButton loginBtn = new JButton("Log In");
+        gbc.gridx=0; gbc.gridy=2; gbc.gridwidth=2;
+        panel.add(loginBtn, gbc);
