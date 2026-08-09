@@ -54,3 +54,24 @@ public class LoginFrame extends JFrame {
         JButton loginBtn = new JButton("Log In");
         gbc.gridx=0; gbc.gridy=2; gbc.gridwidth=2;
         panel.add(loginBtn, gbc);
+
+        
+        // Login action: validate, then open MainFrame
+        loginBtn.addActionListener((ActionEvent e) -> {
+            String uid = userIdField.getText().trim();
+            String pass = new String(passwordField.getPassword());
+            if (uid.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill all fields.");
+                return;
+            }
+            var user = dataStore.login(uid, pass);
+            if (user == null) {
+                JOptionPane.showMessageDialog(this, "Invalid User ID or password.");
+            } else {
+                dispose();  // close login window
+                new MainFrame(dataStore, user).setVisible(true);
+            }
+        });
+
+        return panel;
+    }
