@@ -12,6 +12,12 @@ import java.util.HashMap;
  */
 
 
+public class DataStore implements Serializable {
+
+
+
+
+}
 
 
 
