@@ -91,3 +91,26 @@ public class LoginFrame extends JFrame {
         gbc.gridx=0; gbc.gridy=1; panel.add(lblArea, gbc);
         areaField = new JTextField(10);
         gbc.gridx=1; panel.add(areaField, gbc);
+JLabel lblPass = new JLabel("Password:");
+        gbc.gridx=0; gbc.gridy=2; panel.add(lblPass, gbc);
+        regPasswordField = new JPasswordField(10);
+        gbc.gridx=1; panel.add(regPasswordField, gbc);
+
+        JButton regBtn = new JButton("Register");
+        gbc.gridx=0; gbc.gridy=3; gbc.gridwidth=2;
+        panel.add(regBtn, gbc);
+
+        regBtn.addActionListener((ActionEvent e) -> {
+            String name = nameField.getText().trim();
+            String area = areaField.getText().trim();
+            String pass = new String(regPasswordField.getPassword());
+            if (name.isEmpty() || area.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields are required.");
+                return;
+            }
+            String newId = dataStore.registerUser(name, area, pass);
+            JOptionPane.showMessageDialog(this,
+                    "Registration successful! Your User ID is: " + newId);
+            // Clear fields
+            nameField.setText("");
+            areaField.setText("");
