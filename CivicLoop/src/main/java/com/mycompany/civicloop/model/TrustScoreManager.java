@@ -19,6 +19,9 @@ public class TrustScoreManager implements Serializable {
         this.score = 50;   // all users start at 50
     }
     
+     public void increaseScore(int amount) { score += amount; if (score > 100) score = 100; }
+    public void decreaseScore(int amount) { score -= amount; if (score < 0) score = 0; }
+    
 
 
 
