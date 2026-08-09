@@ -135,6 +135,30 @@ public class DataStore implements Serializable {
         return "Service requested successfully!";
     }
 
+    
+
+    private Service findServiceById(String id) {
+        for (Service s : services) if (s.getServiceId().equals(id)) return s;
+        return null;
+    }
+
+    // ---- Trust & Reputation (Member 4) ----
+    public void reportLateReturn(String userId) {
+        TrustScoreManager tm = trustManagers.get(userId);
+        if (tm != null) {
+            tm.decreaseScore(3);
+            findUser(userId).setTrustScore(tm.getScore());
+        }
+    }
+
+    public void reportFakeRequest(String userId) {
+        TrustScoreManager tm = trustManagers.get(userId);
+        if (tm != null) {
+            tm.decreaseScore(10);
+            findUser(userId).setTrustScore(tm.getScore());
+        }
+    }
+
 
 
 
