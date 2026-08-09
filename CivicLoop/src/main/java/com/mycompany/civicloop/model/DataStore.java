@@ -94,6 +94,47 @@ public class DataStore implements Serializable {
         return "Item borrowed successfully!";
     }
 
+    
+    private Item findItemById(String id) {
+        for (Item i : items) if (i.getItemId().equals(id)) return i;
+        return null;
+    }
+
+    // ---- Service Exchange (Member 3) ----
+    public void addService(String serviceType, User provider) {
+        services.add(new Service(serviceType, provider.getUserId()));
+    }
+
+    public ArrayList<Service> getServices() { return services; }
+
+    public String requestService(String serviceId, User seeker, double hours) {
+        Service s = findServiceById(serviceId);
+        if (s == null) return "Service not found.";
+        if (!s.isAvailable()) return "Service is currently busy.";
+        if (s.getProviderId().equals(seeker.getUserId()))
+            return "You cannot request your own service.";
+
+        User provider = findUser(s.getProviderId());
+        if (provider == null) return "Provider not found.";
+
+        // Polymorphism again: Service implements Creditable (rate 1.0)
+        TimeCreditTransaction t = new TimeCreditTransaction(
+                seeker.getUserId(), provider.getUserId(), hours, s);
+
+        double credit = t.getCreditAmount();
+        seeker.setTimeCreditBalance(seeker.getTimeCreditBalance() - credit);
+        provider.setTimeCreditBalance(provider.getTimeCreditBalance() + credit);
+
+        trustManagers.get(seeker.getUserId()).increaseScore(5);
+        trustManagers.get(provider.getUserId()).increaseScore(5);
+        seeker.setTrustScore(trustManagers.get(seeker.getUserId()).getScore());
+        provider.setTrustScore(trustManagers.get(provider.getUserId()).getScore());
+
+        s.markBusy();
+        transactions.add(t);
+        return "Service requested successfully!";
+    }
+
 
 
 
