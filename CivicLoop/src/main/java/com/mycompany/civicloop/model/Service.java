@@ -28,7 +28,14 @@ public class Service implements Creditable, Serializable {
         return "Service";
     }
 
+// ---------- Getters & business methods ----------
+    public String getServiceId() { return serviceId; }
+    public String getServiceType() { return serviceType; }
+    public String getProviderId() { return providerId; }
+    public boolean isAvailable() { return isAvailable; }
 
+    public void markBusy() { this.isAvailable = false; }
+    public void markAvailable() { this.isAvailable = true; }
 }
-
+// done
 
