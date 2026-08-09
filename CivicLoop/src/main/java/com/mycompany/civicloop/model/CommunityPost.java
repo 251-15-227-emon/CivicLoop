@@ -32,6 +32,14 @@ private String postId;
 
 
 
+    
+    /** Static factory method (as in diagram) */
+    public static CommunityPost createPost(String authorId, String content) {
+        return new CommunityPost(authorId, content);
+    }
+
+
+
 
 }
 
