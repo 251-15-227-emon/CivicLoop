@@ -10,10 +10,18 @@ import java.io.Serializable;
  */
 
 public class TrustScoreManager implements Serializable {
+
+    private String userId;
+    private int score;
+
+    public TrustScoreManager(String userId) {
+        this.userId = userId;
+        this.score = 50;   // all users start at 50
+    }
     
 
 
 
 
-    
+
 }
