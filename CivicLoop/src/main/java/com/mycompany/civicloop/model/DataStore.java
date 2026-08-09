@@ -180,6 +180,22 @@ public class DataStore implements Serializable {
         }
     }
 
+     // ---- Transactions (Member 3) ----
+    public ArrayList<TimeCreditTransaction> getTransactions() { return transactions; }
+
+    // ---- File Persistence (java.io serialisation) ----
+    public void saveToFile(String filename) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+        }
+    }
+
+    public static DataStore loadFromFile(String filename) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (DataStore) ois.readObject();
+        }
+    }
+
 
 
 
