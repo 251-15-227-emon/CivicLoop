@@ -15,6 +15,24 @@ import java.util.HashMap;
 public class DataStore implements Serializable {
 
 
+ private HashMap<String, User> users;
+    private ArrayList<Item> items;
+    private ArrayList<Service> services;
+    private ArrayList<TimeCreditTransaction> transactions;
+    private ArrayList<CommunityPost> posts;
+    private HashMap<String, TrustScoreManager> trustManagers; // userId -> manager
+
+    public DataStore() {
+        users = new HashMap<>();
+        items = new ArrayList<>();
+        services = new ArrayList<>();
+        transactions = new ArrayList<>();
+        posts = new ArrayList<>();
+        trustManagers = new HashMap<>();
+    }
+
+
+
 
 
 }
