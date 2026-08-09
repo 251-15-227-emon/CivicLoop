@@ -34,22 +34,17 @@ public class User implements Serializable {
 
 
 
+    // ---------- Public getters / controlled setters ----------
+    public String getUserId() { return userId; }
+    public String getName() { return name; }
+    public String getArea() { return area; }
+    public ArrayList<String> getSkills() { return skills; }
+    public int getTrustScore() { return trustScore; }
+    public void setTrustScore(int trustScore) { this.trustScore = Math.max(0, trustScore); }
+    public double getTimeCreditBalance() { return timeCreditBalance; }
+    public void setTimeCreditBalance(double balance) { this.timeCreditBalance = balance; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void addSkill(String skill) { skills.add(skill); }
 
 
 
