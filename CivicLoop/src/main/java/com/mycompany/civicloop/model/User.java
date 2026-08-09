@@ -17,6 +17,38 @@ public class User implements Serializable {
     private String password;             // stored plainly for this beginner project
     private int trustScore;              // initialised by TrustScoreManager
     private double timeCreditBalance;    // how many TimeCredits the user has
+     
+    public User(String name, String area, String password) {
+        this.userId = UUID.randomUUID().toString().substring(0, 8);
+        this.name = name;
+        this.area = area;
+        this.password = password;
+        this.skills = new ArrayList<>();
+        this.trustScore = 50;            // starting trust score (see TrustScoreManager)
+        this.timeCreditBalance = 0.0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
