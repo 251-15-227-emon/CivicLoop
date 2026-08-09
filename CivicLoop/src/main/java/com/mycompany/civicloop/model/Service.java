@@ -17,6 +17,13 @@ public class Service implements Creditable, Serializable {
         this.providerId = providerId;
         this.isAvailable = true;
     }
+// ---------- Creditable interface ----------
+    @Override
+    public double getCreditRate() {
+        return 1.0;   // 1 hour of active work = 1 TimeCredit
+    }
+
+
 
 
 }
