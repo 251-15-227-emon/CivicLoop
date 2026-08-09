@@ -114,3 +114,9 @@ JLabel lblPass = new JLabel("Password:");
             // Clear fields
             nameField.setText("");
             areaField.setText("");
+            
+            regPasswordField.setText("");
+        });
+
+        return panel;
+    }
