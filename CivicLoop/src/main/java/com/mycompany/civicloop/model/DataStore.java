@@ -52,6 +52,47 @@ public class DataStore implements Serializable {
     public void addItem(String itemName, User owner) {
         items.add(new Item(itemName, owner.getUserId()));
     }
+    
+
+
+    
+    public ArrayList<Item> getItems() { return items; }
+
+    /**
+     * Core exchange logic for item borrowing (follows activity diagram).
+     * Borrower spends TimeCredits, owner earns them. Trust scores increase.
+     */
+    public String requestItem(String itemId, User borrower, double hours) {
+        Item item = findItemById(itemId);
+        if (item == null) return "Item not found.";
+        if (!item.isAvailable()) return "Item is already borrowed.";
+        if (item.getOwnerId().equals(borrower.getUserId()))
+            return "You cannot borrow your own item.";
+
+        User owner = findUser(item.getOwnerId());
+        if (owner == null) return "Owner not found.";
+
+        // Create transaction (polymorphism: Item implements Creditable)
+        TimeCreditTransaction t = new TimeCreditTransaction(
+                borrower.getUserId(), owner.getUserId(), hours, item);
+
+        // Update balances
+        double credit = t.getCreditAmount();
+        borrower.setTimeCreditBalance(borrower.getTimeCreditBalance() - credit);
+        owner.setTimeCreditBalance(owner.getTimeCreditBalance() + credit);
+
+        
+        // Update trust scores (both gain trust)
+        trustManagers.get(borrower.getUserId()).increaseScore(5);
+        trustManagers.get(owner.getUserId()).increaseScore(5);
+        // Sync user objects
+        borrower.setTrustScore(trustManagers.get(borrower.getUserId()).getScore());
+        owner.setTrustScore(trustManagers.get(owner.getUserId()).getScore());
+
+        item.markBorrowed();
+        transactions.add(t);
+        return "Item borrowed successfully!";
+    }
 
 
 
