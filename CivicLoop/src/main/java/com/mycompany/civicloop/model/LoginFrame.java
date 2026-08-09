@@ -34,3 +34,4 @@ public class LoginFrame extends JFrame {
         tabs.add("Register", createRegisterPanel());
         add(tabs);
     }
+   
