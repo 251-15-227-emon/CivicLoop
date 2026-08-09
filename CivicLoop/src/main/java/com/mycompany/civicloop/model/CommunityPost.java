@@ -12,13 +12,28 @@ import java.util.UUID;
  * to centralise ID/timestamp generation (as required by the UML diagram).
  */
 
+public class CommunityPost implements Serializable {
+
+private String postId;
+    private String authorId;
+    private String content;
+    private String timestamp;
+    private int likes;
+    private ArrayList<String> comments;
+
+    private CommunityPost(String authorId, String content) {
+        this.postId = UUID.randomUUID().toString().substring(0, 8);
+        this.authorId = authorId;
+        this.content = content;
+        this.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
+        this.likes = 0;
+        this.comments = new ArrayList<>();
+    }
 
 
 
 
-
-
-
+}
 
 
 
