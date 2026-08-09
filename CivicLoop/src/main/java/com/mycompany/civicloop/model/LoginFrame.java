@@ -120,3 +120,5 @@ JLabel lblPass = new JLabel("Password:");
 
         return panel;
     }
+    
+    // Save data when the whole application window closes
