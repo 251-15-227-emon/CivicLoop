@@ -24,6 +24,14 @@ public class TimeCreditTransaction implements Serializable {
         this.type = offer.getOfferType();
     }
 
+    /**
+     * Polymorphic call: the same method behaves differently depending on
+     * whether 'offer' is an Item (rate 0.5) or a Service (rate 1.0).
+     */
+    private double calculateCredit(double hours, Creditable offer) {
+        return hours * offer.getCreditRate();
+    }
+
 
 
 
