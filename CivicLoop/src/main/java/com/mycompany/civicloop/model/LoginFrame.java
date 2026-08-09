@@ -75,3 +75,19 @@ public class LoginFrame extends JFrame {
 
         return panel;
     }
+    
+    private JPanel createRegisterPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5,5,5,5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel lblName = new JLabel("Full Name:");
+        gbc.gridx=0; gbc.gridy=0; panel.add(lblName, gbc);
+        nameField = new JTextField(10);
+        gbc.gridx=1; panel.add(nameField, gbc);
+
+        JLabel lblArea = new JLabel("Area:");
+        gbc.gridx=0; gbc.gridy=1; panel.add(lblArea, gbc);
+        areaField = new JTextField(10);
+        gbc.gridx=1; panel.add(areaField, gbc);
