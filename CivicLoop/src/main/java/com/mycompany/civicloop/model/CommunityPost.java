@@ -51,6 +51,13 @@ private String postId;
     public ArrayList<String> getComments() { return comments; }
 
 
+     @Override
+    public String toString() {
+        return String.format("[%s] %s: %s (♥ %d, 💬 %d)",
+                timestamp, authorId, content, likes, comments.size());
+    }
+
+
 
 
 }
