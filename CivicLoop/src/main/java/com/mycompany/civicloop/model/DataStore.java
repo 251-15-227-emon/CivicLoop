@@ -159,6 +159,28 @@ public class DataStore implements Serializable {
         }
     }
 
+     public int getTrustScore(String userId) {
+        TrustScoreManager tm = trustManagers.get(userId);
+        return tm != null ? tm.getScore() : 0;
+    }
+
+    // ---- Community Feed (Member 5) ----
+    public void addPost(String authorId, String content) {
+        posts.add(CommunityPost.createPost(authorId, content));
+    }
+
+    public ArrayList<CommunityPost> getPosts() { return posts; }
+
+    public void likePost(String postId) {
+        for (CommunityPost p : posts) {
+            if (p.getPostId().equals(postId)) {
+                p.addLike();
+                break;
+            }
+        }
+    }
+
+
 
 
 
