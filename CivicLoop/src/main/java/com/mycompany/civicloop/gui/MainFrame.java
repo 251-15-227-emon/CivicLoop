@@ -53,3 +53,17 @@ public class MainFrame extends JFrame {
         add(tabs, BorderLayout.CENTER);
 
          // Save data on window close
+
+         
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                try {
+                    dataStore.saveToFile("civicloop_data.dat");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(MainFrame.this,
+                            "Could not save data: " + ex.getMessage());
+                }
+            }
+        });
+    }
