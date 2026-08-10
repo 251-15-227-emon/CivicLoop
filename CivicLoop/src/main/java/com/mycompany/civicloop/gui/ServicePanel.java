@@ -68,9 +68,17 @@ private MainFrame parent;
     }
 
 
-
-
-
+     public void refreshTable() {
+        tableModel.setRowCount(0);
+        for (Service s : parent.getDataStore().getServices()) {
+            User provider = parent.getDataStore().findUser(s.getProviderId());
+            String name = provider != null ? provider.getName() : "Unknown";
+            tableModel.addRow(new Object[]{
+                    s.getServiceId(), s.getServiceType(), name,
+                    s.isAvailable() ? "Available" : "Busy"
+            });
+        }
+    }
 
 
 
