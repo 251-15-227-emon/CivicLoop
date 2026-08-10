@@ -32,3 +32,10 @@ public class TimeBankPanel extends JPanel {
 
         refresh();
     }
+
+
+    
+    public void refresh() {
+        String uid = parent.getCurrentUser().getUserId();
+        balanceLabel.setText("Your TimeCredit Balance: " +
+                parent.getCurrentUser().getTimeCreditBalance() + " TC");
