@@ -56,3 +56,25 @@ public class FeedPanel extends JPanel {
         postInput.setText("");
         parent.refreshAll();  // refresh feed and other tabs
     }
+
+    
+    private void likePost() {
+        String selected = postList.getSelectedValue();
+        if (selected == null) {
+            JOptionPane.showMessageDialog(this, "Select a post to like.");
+            return;
+        }
+        // Extract postId from the beginning of the string (format: [id] ...)
+        // For simplicity we find the post object by matching the displayed text.
+        // A better approach: store post IDs in a parallel list. Here we search in DataStore.
+        ArrayList<CommunityPost> posts = parent.getDataStore().getPosts();
+        // The list is newest-first; find by matching toString()
+        for (CommunityPost p : posts) {
+            if (p.toString().equals(selected)) {
+                parent.getDataStore().likePost(p.getPostId());
+                parent.refreshAll();
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Post not found.");
+    }
