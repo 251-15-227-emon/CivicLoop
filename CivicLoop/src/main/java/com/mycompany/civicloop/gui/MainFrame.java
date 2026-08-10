@@ -67,3 +67,5 @@ public class MainFrame extends JFrame {
             }
         });
     }
+
+    /** Refresh all panels to reflect the latest data. */
