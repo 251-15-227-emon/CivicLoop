@@ -24,6 +24,12 @@ public class Item implements Creditable, Serializable {
         this.isAvailable = true;
     }
 
+    // ---------- Creditable interface ----------
+    @Override
+    public double getCreditRate() {
+        return 0.5;   // 1 hour borrowed = 0.5 TimeCredit (lending needs less effort)
+    }
+
 
 
 
