@@ -51,3 +51,5 @@ public class MainFrame extends JFrame {
         tabs.add("Community Feed", feedPanel);
 
         add(tabs, BorderLayout.CENTER);
+
+         // Save data on window close
