@@ -44,6 +44,28 @@ private MainFrame parent;
         parent.getDataStore().addService(type.trim(), parent.getCurrentUser());
         parent.refreshAll();
     }
+    
+    private void requestService() {
+        int row = serviceTable.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Select a service first.");
+            return;
+        }
+        String serviceId = (String) tableModel.getValueAt(row, 0);
+        String hoursStr = JOptionPane.showInputDialog(this, "How many hours of service?");
+        if (hoursStr == null) return;
+        try {
+            double hours = Double.parseDouble(hoursStr);
+            if (hours <= 0) throw new IllegalArgumentException("Hours must be positive.");
+            String result = parent.getDataStore().requestService(serviceId, parent.getCurrentUser(), hours);
+            JOptionPane.showMessageDialog(this, result);
+            parent.refreshAll();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid number.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
 
 
 
