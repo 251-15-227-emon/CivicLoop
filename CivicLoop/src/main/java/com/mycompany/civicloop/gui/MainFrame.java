@@ -19,3 +19,35 @@ public class MainFrame extends JFrame {
     private TimeBankPanel timeBankPanel;
     private TrustPanel trustPanel;
     private FeedPanel feedPanel;
+
+    public MainFrame(DataStore dataStore, User user) {
+        this.dataStore = dataStore;
+        this.currentUser = user;
+        setTitle("CivicLoop - " + user.getName() + " (" + user.getUserId() + ")");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Top welcome bar
+        welcomeLabel = new JLabel("Welcome, " + user.getName() +
+                " | Area: " + user.getArea() +
+                " | Balance: " + user.getTimeCreditBalance() + " TC");
+        welcomeLabel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        add(welcomeLabel, BorderLayout.NORTH);
+
+        // Tabbed pane
+        JTabbedPane tabs = new JTabbedPane();
+        itemPanel = new ItemPanel(this);
+        servicePanel = new ServicePanel(this);
+        timeBankPanel = new TimeBankPanel(this);
+        trustPanel = new TrustPanel(this);
+        feedPanel = new FeedPanel(this);
+
+        tabs.add("Item Sharing", itemPanel);
+        tabs.add("Service Exchange", servicePanel);
+        tabs.add("TimeBank", timeBankPanel);
+        tabs.add("Trust & Profile", trustPanel);
+        tabs.add("Community Feed", feedPanel);
+
+        add(tabs, BorderLayout.CENTER);
