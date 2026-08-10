@@ -10,6 +10,10 @@ import java.util.UUID;/**
 
 public class Item implements Creditable, Serializable {
 
+ private String itemId;
+    private String itemName;
+    private String ownerId;
+    private boolean isAvailable;   // true = can be borrowed
 
 
 
