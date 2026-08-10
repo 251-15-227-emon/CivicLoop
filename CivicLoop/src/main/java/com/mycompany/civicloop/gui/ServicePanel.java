@@ -38,6 +38,31 @@ private MainFrame parent;
         refreshTable();
     }
 
+     private void offerService() {
+        String type = JOptionPane.showInputDialog(this, "Enter service type (e.g., Guitar Teaching):");
+        if (type == null || type.trim().isEmpty()) return;
+        parent.getDataStore().addService(type.trim(), parent.getCurrentUser());
+        parent.refreshAll();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 
