@@ -34,7 +34,21 @@ public class Item implements Creditable, Serializable {
     public String getOfferType() {
         return "Item";
     }
+
+
     
+    // ---------- Getters & business methods ----------
+    public String getItemId() { return itemId; }
+    public String getItemName() { return itemName; }
+    public String getOwnerId() { return ownerId; }
+
+    
+    public boolean isAvailable() { return isAvailable; }
+
+    public void markBorrowed() { this.isAvailable = false; }
+    public void markReturned() { this.isAvailable = true; }
+
+
 
 
 
