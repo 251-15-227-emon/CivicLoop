@@ -17,6 +17,23 @@ public class Item implements Creditable, Serializable {
 
 
 
+ public Item(String itemName, String ownerId) {
+        this.itemId = UUID.randomUUID().toString().substring(0, 8);
+        this.itemName = itemName;
+        this.ownerId = ownerId;
+        this.isAvailable = true;
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
