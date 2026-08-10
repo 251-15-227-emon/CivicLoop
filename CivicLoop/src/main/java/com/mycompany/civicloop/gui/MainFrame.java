@@ -69,3 +69,15 @@ public class MainFrame extends JFrame {
     }
 
     /** Refresh all panels to reflect the latest data. */
+
+     
+    public void refreshAll() {
+        welcomeLabel.setText("Welcome, " + currentUser.getName() +
+                " | Area: " + currentUser.getArea() +
+                " | Balance: " + currentUser.getTimeCreditBalance() + " TC");
+        itemPanel.refreshTable();
+        servicePanel.refreshTable();
+        timeBankPanel.refresh();
+        trustPanel.refresh();
+        feedPanel.refresh();
+    }
