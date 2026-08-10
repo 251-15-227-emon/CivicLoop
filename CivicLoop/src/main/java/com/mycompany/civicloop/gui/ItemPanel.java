@@ -37,3 +37,10 @@ public class ItemPanel extends JPanel {
         requestBtn.addActionListener(e -> requestItem());
         refreshTable();
     }
+
+    private void addItem() {
+        String name = JOptionPane.showInputDialog(this, "Enter item name:");
+        if (name == null || name.trim().isEmpty()) return;
+        parent.getDataStore().addItem(name.trim(), parent.getCurrentUser());
+        parent.refreshAll();
+    }
