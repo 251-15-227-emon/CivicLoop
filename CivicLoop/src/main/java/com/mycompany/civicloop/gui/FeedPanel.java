@@ -45,3 +45,14 @@ public class FeedPanel extends JPanel {
         likeBtn.addActionListener(e -> likePost());
         refresh();
     }
+
+    private void addPost() {
+        String content = postInput.getText().trim();
+        if (content.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Cannot post an empty message.");
+            return;
+        }
+        parent.getDataStore().addPost(parent.getCurrentUser().getUserId(), content);
+        postInput.setText("");
+        parent.refreshAll();  // refresh feed and other tabs
+    }
