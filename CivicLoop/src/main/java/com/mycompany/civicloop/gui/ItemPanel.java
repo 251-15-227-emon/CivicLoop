@@ -44,3 +44,27 @@ public class ItemPanel extends JPanel {
         parent.getDataStore().addItem(name.trim(), parent.getCurrentUser());
         parent.refreshAll();
     }
+
+    private void requestItem() {
+        int row = itemTable.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Select an item first.");
+            return;
+        }
+        String itemId = (String) tableModel.getValueAt(row, 0);
+        // Validate numeric hours
+        String hoursStr = JOptionPane.showInputDialog(this, "How many hours to borrow?");
+        if (hoursStr == null) return;
+        try {
+            double hours = Double.parseDouble(hoursStr);
+            if (hours <= 0) throw new IllegalArgumentException("Hours must be positive.");
+            // The business logic is in DataStore
+            String result = parent.getDataStore().requestItem(itemId, parent.getCurrentUser(), hours);
+            JOptionPane.showMessageDialog(this, result);
+            parent.refreshAll();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid number – please enter a valid decimal.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
