@@ -32,3 +32,27 @@ public class TimeBankPanel extends JPanel {
 
         refresh();
     }
+
+    
+
+    public void refresh() {
+        String uid = parent.getCurrentUser().getUserId();
+        balanceLabel.setText("Your TimeCredit Balance: " +
+                parent.getCurrentUser().getTimeCreditBalance() + " TC");
+
+        tableModel.setRowCount(0);
+        for (TimeCreditTransaction t : parent.getDataStore().getTransactions()) {
+            // Show only transactions involving this user
+            if (t.getFromUserId().equals(uid) || t.getToUserId().equals(uid)) {
+                tableModel.addRow(new Object[]{
+                        t.getTransactionId(),
+                        t.getFromUserId(),
+                        t.getToUserId(),
+                        t.getHoursSpent(),
+                        t.getCreditAmount(),
+                        t.getType()
+                });
+            }
+        }
+    }
+}
