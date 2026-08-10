@@ -81,3 +81,4 @@ public class MainFrame extends JFrame {
         trustPanel.refresh();
         feedPanel.refresh();
     }
+// Convenience getters for panels
