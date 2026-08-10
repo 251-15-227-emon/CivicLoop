@@ -78,3 +78,13 @@ public class FeedPanel extends JPanel {
         }
         JOptionPane.showMessageDialog(this, "Post not found.");
     }
+
+    public void refresh() {
+        postListModel.clear();
+        // Display posts newest first (reverse order of insertion)
+        ArrayList<CommunityPost> posts = parent.getDataStore().getPosts();
+        for (int i = posts.size() - 1; i >= 0; i--) {
+            postListModel.addElement(posts.get(i).toString());
+        }
+    }
+}
