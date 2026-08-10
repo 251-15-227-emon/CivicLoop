@@ -30,6 +30,12 @@ public class Item implements Creditable, Serializable {
         return 0.5;   // 1 hour borrowed = 0.5 TimeCredit (lending needs less effort)
     }
 
+    @Override
+    public String getOfferType() {
+        return "Item";
+    }
+    
+
 
 
 
