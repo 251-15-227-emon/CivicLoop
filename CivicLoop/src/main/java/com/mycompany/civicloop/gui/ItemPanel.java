@@ -68,3 +68,16 @@ public class ItemPanel extends JPanel {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
+
+public void refreshTable() {
+        tableModel.setRowCount(0);
+        for (Item i : parent.getDataStore().getItems()) {
+            User owner = parent.getDataStore().findUser(i.getOwnerId());
+            String ownerName = owner != null ? owner.getName() : "Unknown";
+            tableModel.addRow(new Object[]{
+                    i.getItemId(), i.getItemName(), ownerName,
+                    i.isAvailable() ? "Available" : "Borrowed"
+            });
+        }
+    }
+}
