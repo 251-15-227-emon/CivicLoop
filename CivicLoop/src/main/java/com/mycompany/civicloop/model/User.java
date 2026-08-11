@@ -9,7 +9,9 @@ import java.util.UUID;
  * ENCAPSULATION: password is private – no public getter, only checkPassword().
  */
 
-public class User implements Serializable {
+    public class User implements Serializable {
+
+        
     private String userId;
     private String name;
     private String area;
