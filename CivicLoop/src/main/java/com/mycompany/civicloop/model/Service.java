@@ -29,6 +29,7 @@ public class Service implements Creditable, Serializable {
     }
 
 // ---------- Getters & business methods ----------
+
     public String getServiceId() { return serviceId; }
     public String getServiceType() { return serviceType; }
     public String getProviderId() { return providerId; }
