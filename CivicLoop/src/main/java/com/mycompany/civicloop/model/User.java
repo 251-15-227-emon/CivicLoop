@@ -11,7 +11,7 @@ import java.util.UUID;
 
     public class User implements Serializable {
 
-        
+
     private String userId;
     private String name;
     private String area;
@@ -37,6 +37,8 @@ import java.util.UUID;
 
 
     // ---------- Public getters / controlled setters ----------
+
+    
     public String getUserId() { return userId; }
     public String getName() { return name; }
     public String getArea() { return area; }
