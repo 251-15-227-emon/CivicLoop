@@ -48,7 +48,7 @@ public class DataStore implements Serializable {
     public User findUser(String userId) { return users.get(userId); }
     public HashMap<String, User> getAllUsers() { return users; }
 
-    // ---- Item Sharing (Member 2) ----
+    
     public void addItem(String itemName, User owner) {
         items.add(new Item(itemName, owner.getUserId()));
     }
@@ -100,7 +100,6 @@ public class DataStore implements Serializable {
         return null;
     }
 
-    // ---- Service Exchange (Member 3) ----
     public void addService(String serviceType, User provider) {
         services.add(new Service(serviceType, provider.getUserId()));
     }
