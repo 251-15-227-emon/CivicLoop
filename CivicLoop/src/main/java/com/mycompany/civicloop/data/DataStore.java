@@ -63,7 +63,7 @@ public class DataStore implements Serializable {
      */
 
     public String requestItem(String itemId, User borrower, double hours) {
-        
+
         Item item = findItemById(itemId);
         if (item == null) return "Item not found.";
         if (!item.isAvailable()) return "Item is already borrowed.";
@@ -182,7 +182,6 @@ public class DataStore implements Serializable {
 
     
 
-     // ---- Transactions (Member 3) ----
     public ArrayList<TimeCreditTransaction> getTransactions() { return transactions; }
 
     // ---- File Persistence (java.io serialisation) ----
