@@ -43,10 +43,12 @@ public class ItemPanel extends JPanel {
     }
 
     private void addItem() {
+
         String name = JOptionPane.showInputDialog(this, "Enter item name:");
         if (name == null || name.trim().isEmpty()) return;
         parent.getDataStore().addItem(name.trim(), parent.getCurrentUser());
         parent.refreshAll();
+        
     }
 
     private void requestItem() {
@@ -55,7 +57,7 @@ public class ItemPanel extends JPanel {
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Select an item first.");
             return;
-            
+
         }
         String itemId = (String) tableModel.getValueAt(row, 0);
         // Validate numeric hours
