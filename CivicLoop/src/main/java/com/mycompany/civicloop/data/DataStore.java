@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class DataStore implements Serializable {
 
 
- private HashMap<String, User> users;
+    private HashMap<String, User> users;
     private ArrayList<Item> items;
     private ArrayList<Service> services;
     private ArrayList<TimeCreditTransaction> transactions;
