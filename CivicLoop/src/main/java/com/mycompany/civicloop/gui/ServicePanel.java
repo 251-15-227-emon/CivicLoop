@@ -6,15 +6,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-/**
- * Panel for offering services and requesting them.
- */
-
-
 public class ServicePanel extends JPanel {
 
-
-private MainFrame parent;
+    private MainFrame parent;
     private JTable serviceTable;
     private DefaultTableModel tableModel;
 
