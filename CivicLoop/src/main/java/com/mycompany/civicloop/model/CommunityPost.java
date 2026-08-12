@@ -12,6 +12,8 @@ import java.util.UUID;
  * to centralise ID/timestamp generation (as required by the UML diagram).
  */
 
+
+
 public class CommunityPost implements Serializable {
 
 private String postId;
