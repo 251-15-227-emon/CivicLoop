@@ -31,7 +31,6 @@ public class DataStore implements Serializable {
         trustManagers = new HashMap<>();
     }
 
-     // ---- User Account (Member 1) ----
     public String registerUser(String name, String area, String password) {
         User u = new User(name, area, password);
         users.put(u.getUserId(), u);
@@ -62,6 +61,7 @@ public class DataStore implements Serializable {
      * Core exchange logic for item borrowing (follows activity diagram).
      * Borrower spends TimeCredits, owner earns them. Trust scores increase.
      */
+    
     public String requestItem(String itemId, User borrower, double hours) {
         Item item = findItemById(itemId);
         if (item == null) return "Item not found.";
