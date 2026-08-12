@@ -30,8 +30,6 @@ private String postId;
         this.comments = new ArrayList<>();
     }
 
-
-
     
     /** Static factory method (as in diagram) */
     public static CommunityPost createPost(String authorId, String content) {
