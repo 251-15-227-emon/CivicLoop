@@ -69,6 +69,8 @@ public class ItemPanel extends JPanel {
         }
     }
 
+
+
 public void refreshTable() {
         tableModel.setRowCount(0);
         for (Item i : parent.getDataStore().getItems()) {
