@@ -73,7 +73,7 @@ import java.util.ArrayList;
         // A better approach: store post IDs in a parallel list. Here we search in DataStore.
 
         ArrayList<CommunityPost> posts = parent.getDataStore().getPosts();
-        
+
         // The list is newest-first; find by matching toString()
         for (CommunityPost p : posts) {
             if (p.toString().equals(selected)) {
@@ -94,4 +94,5 @@ import java.util.ArrayList;
             postListModel.addElement(posts.get(i).toString());
         }
     }
+    
 }
