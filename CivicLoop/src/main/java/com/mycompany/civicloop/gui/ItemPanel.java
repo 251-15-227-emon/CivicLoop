@@ -50,11 +50,12 @@ public class ItemPanel extends JPanel {
     }
 
     private void requestItem() {
-        
+
         int row = itemTable.getSelectedRow();
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Select an item first.");
             return;
+            
         }
         String itemId = (String) tableModel.getValueAt(row, 0);
         // Validate numeric hours
