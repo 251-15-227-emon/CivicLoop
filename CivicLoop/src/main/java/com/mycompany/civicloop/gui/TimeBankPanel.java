@@ -19,6 +19,7 @@ public class TimeBankPanel extends JPanel {
     private DefaultTableModel tableModel;
 
     public TimeBankPanel(MainFrame parent) {
+
         this.parent = parent;
         setLayout(new BorderLayout());
 
@@ -34,6 +35,7 @@ public class TimeBankPanel extends JPanel {
         add(new JScrollPane(txTable), BorderLayout.CENTER);
 
         refresh();
+        
     }
 
     
