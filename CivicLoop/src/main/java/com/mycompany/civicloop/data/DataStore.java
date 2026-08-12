@@ -141,7 +141,7 @@ public class DataStore implements Serializable {
         return null;
     }
 
-    // ---- Trust & Reputation (Member 4) ----
+    
     public void reportLateReturn(String userId) {
         TrustScoreManager tm = trustManagers.get(userId);
         if (tm != null) {
@@ -178,6 +178,8 @@ public class DataStore implements Serializable {
             }
         }
     }
+
+    
 
      // ---- Transactions (Member 3) ----
     public ArrayList<TimeCreditTransaction> getTransactions() { return transactions; }
