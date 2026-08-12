@@ -38,7 +38,9 @@ import java.util.UUID;
     // ---------- Public getters / controlled setters ----------
 
     
-    public String getUserId() { return userId; }
+    public String getUserId() { 
+        return userId; 
+    }
     public String getName() { return name; }
     public String getArea() { return area; }
     public ArrayList<String> getSkills() { return skills; }
