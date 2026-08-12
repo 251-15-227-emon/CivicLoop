@@ -30,7 +30,7 @@ public class Service implements Creditable, Serializable {
         return "Service";
     }
 
-// ---------- Getters & business methods ----------
+    // ---------- Getters & business methods ----------
 
     public String getServiceId() { return serviceId; }
     public String getServiceType() { return serviceType; }
@@ -40,5 +40,4 @@ public class Service implements Creditable, Serializable {
     public void markBusy() { this.isAvailable = false; }
     public void markAvailable() { this.isAvailable = true; }
 }
-// done
 
