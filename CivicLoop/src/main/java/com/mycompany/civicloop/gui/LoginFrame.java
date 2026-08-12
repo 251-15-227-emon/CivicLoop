@@ -38,6 +38,7 @@ public class LoginFrame extends JFrame {
         tabs.add("Register", createRegisterPanel());
         add(tabs);
     }
+    
    
     private JPanel createLoginPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
