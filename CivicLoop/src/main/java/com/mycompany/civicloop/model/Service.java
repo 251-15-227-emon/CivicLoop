@@ -5,6 +5,7 @@ import java.util.UUID;
 
 
 public class Service implements Creditable, Serializable {
+    
     private String serviceId;
     private String serviceType;  
     private String providerId;
@@ -17,7 +18,9 @@ public class Service implements Creditable, Serializable {
         this.providerId = providerId;
         this.isAvailable = true;
     }
-// ---------- Creditable interface ----------
+
+    // ---------- Creditable interface ----------
+
     @Override
     public double getCreditRate() {
         return 1.0;   // 1 hour of active work = 1 TimeCredit
@@ -28,7 +31,7 @@ public class Service implements Creditable, Serializable {
         return "Service";
     }
 
-// ---------- Getters & business methods ----------
+    // ---------- Getters & business methods ----------
 
     public String getServiceId() { return serviceId; }
     public String getServiceType() { return serviceType; }
@@ -38,5 +41,4 @@ public class Service implements Creditable, Serializable {
     public void markBusy() { this.isAvailable = false; }
     public void markAvailable() { this.isAvailable = true; }
 }
-// done
 
