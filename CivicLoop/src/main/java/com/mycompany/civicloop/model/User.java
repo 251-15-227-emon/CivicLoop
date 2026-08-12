@@ -41,8 +41,12 @@ import java.util.UUID;
     public String getUserId() { 
         return userId; 
     }
-    public String getName() { return name; }
-    public String getArea() { return area; }
+    public String getName() { 
+        return name; 
+    }
+    public String getArea() {
+         return area; 
+        }
     public ArrayList<String> getSkills() { return skills; }
     public int getTrustScore() { return trustScore; }
     public void setTrustScore(int trustScore) { this.trustScore = Math.max(0, trustScore); }
