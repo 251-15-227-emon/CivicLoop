@@ -12,6 +12,8 @@ import java.awt.*;
  * Panel for adding items and requesting to borrow them.
  */
 
+
+
 public class ItemPanel extends JPanel {
     private MainFrame parent;
     private JTable itemTable;
