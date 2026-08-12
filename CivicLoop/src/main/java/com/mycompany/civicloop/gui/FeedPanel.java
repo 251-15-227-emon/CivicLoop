@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 
     public class FeedPanel extends JPanel {
-        
+
     private MainFrame parent;
     private DefaultListModel<String> postListModel;
     private JList<String> postList;
@@ -67,9 +67,11 @@ import java.util.ArrayList;
             JOptionPane.showMessageDialog(this, "Select a post to like.");
             return;
         }
+
         // Extract postId from the beginning of the string (format: [id] ...)
         // For simplicity we find the post object by matching the displayed text.
         // A better approach: store post IDs in a parallel list. Here we search in DataStore.
+        
         ArrayList<CommunityPost> posts = parent.getDataStore().getPosts();
         // The list is newest-first; find by matching toString()
         for (CommunityPost p : posts) {
