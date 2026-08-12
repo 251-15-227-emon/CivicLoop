@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class ServicePanel extends JPanel {
 
-private MainFrame parent;
+    private MainFrame parent;
     private JTable serviceTable;
     private DefaultTableModel tableModel;
 
