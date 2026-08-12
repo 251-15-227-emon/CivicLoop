@@ -11,15 +11,15 @@ import java.util.ArrayList;
  */
 
 
-public class FeedPanel extends JPanel {
+    public class FeedPanel extends JPanel {
     private MainFrame parent;
     private DefaultListModel<String> postListModel;
     private JList<String> postList;
     private JTextArea postInput;
 
     
-
     public FeedPanel(MainFrame parent) {
+
         this.parent = parent;
         setLayout(new BorderLayout());
 
