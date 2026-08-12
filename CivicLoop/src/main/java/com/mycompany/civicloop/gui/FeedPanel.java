@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 
     public class FeedPanel extends JPanel {
+        
     private MainFrame parent;
     private DefaultListModel<String> postListModel;
     private JList<String> postList;
