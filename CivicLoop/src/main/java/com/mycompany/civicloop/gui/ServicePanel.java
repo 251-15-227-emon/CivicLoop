@@ -6,9 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-
 public class ServicePanel extends JPanel {
-
 
 private MainFrame parent;
     private JTable serviceTable;
