@@ -179,6 +179,8 @@ public class DataStore implements Serializable {
         }
     }
 
+    
+
      // ---- Transactions (Member 3) ----
     public ArrayList<TimeCreditTransaction> getTransactions() { return transactions; }
 
