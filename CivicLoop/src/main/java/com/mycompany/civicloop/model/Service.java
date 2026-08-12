@@ -18,7 +18,7 @@ public class Service implements Creditable, Serializable {
         this.isAvailable = true;
     }
 
-// ---------- Creditable interface ----------
+    // ---------- Creditable interface ----------
 
     @Override
     public double getCreditRate() {
