@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+
+
 /**
  * Panel for adding items and requesting to borrow them.
  */
