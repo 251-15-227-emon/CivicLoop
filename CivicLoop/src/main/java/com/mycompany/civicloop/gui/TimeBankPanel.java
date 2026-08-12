@@ -11,6 +11,7 @@ import java.awt.*;
  * Shows the current user's transaction history and TimeCredit balance.
  */
 
+
 public class TimeBankPanel extends JPanel {
     private MainFrame parent;
     private JLabel balanceLabel;
