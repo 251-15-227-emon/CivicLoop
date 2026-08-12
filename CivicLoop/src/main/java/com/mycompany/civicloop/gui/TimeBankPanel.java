@@ -5,9 +5,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+
+
 /**
  * Shows the current user's transaction history and TimeCredit balance.
  */
+
 
 public class TimeBankPanel extends JPanel {
     private MainFrame parent;
@@ -16,6 +19,7 @@ public class TimeBankPanel extends JPanel {
     private DefaultTableModel tableModel;
 
     public TimeBankPanel(MainFrame parent) {
+
         this.parent = parent;
         setLayout(new BorderLayout());
 
@@ -31,6 +35,7 @@ public class TimeBankPanel extends JPanel {
         add(new JScrollPane(txTable), BorderLayout.CENTER);
 
         refresh();
+        
     }
 
     

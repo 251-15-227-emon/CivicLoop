@@ -6,9 +6,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+
+
 /**
  * Panel for adding items and requesting to borrow them.
  */
+
+
 
 public class ItemPanel extends JPanel {
     private MainFrame parent;
@@ -39,17 +43,21 @@ public class ItemPanel extends JPanel {
     }
 
     private void addItem() {
+
         String name = JOptionPane.showInputDialog(this, "Enter item name:");
         if (name == null || name.trim().isEmpty()) return;
         parent.getDataStore().addItem(name.trim(), parent.getCurrentUser());
         parent.refreshAll();
+        
     }
 
     private void requestItem() {
+
         int row = itemTable.getSelectedRow();
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Select an item first.");
             return;
+
         }
         String itemId = (String) tableModel.getValueAt(row, 0);
         // Validate numeric hours
@@ -68,6 +76,8 @@ public class ItemPanel extends JPanel {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
+
+
 
 public void refreshTable() {
         tableModel.setRowCount(0);

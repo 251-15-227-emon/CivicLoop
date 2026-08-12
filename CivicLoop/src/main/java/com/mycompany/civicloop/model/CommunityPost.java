@@ -6,11 +6,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+
+
 /**
  * A post on the Community Feed.
  * Uses a STATIC FACTORY METHOD createPost() instead of a public constructor
  * to centralise ID/timestamp generation (as required by the UML diagram).
  */
+
+
 
 public class CommunityPost implements Serializable {
 
@@ -29,8 +33,6 @@ private String postId;
         this.likes = 0;
         this.comments = new ArrayList<>();
     }
-
-
 
     
     /** Static factory method (as in diagram) */
