@@ -84,10 +84,8 @@ public class MainFrame extends JFrame {
         trustPanel.refresh();
         feedPanel.refresh();
     }
-// Convenience getters for panels
 
-
-    
+// Convenience getters for panels  
     public DataStore getDataStore() { return dataStore; }
     public User getCurrentUser() { return currentUser; }
 }
