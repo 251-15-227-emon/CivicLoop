@@ -7,12 +7,10 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
-
 /**
  * Login and registration window.
  * Uses DataStore for persistence – loads saved data on startup and saves on exit.
  */
-
 
 public class LoginFrame extends JFrame {
     private JTextField userIdField, nameField, areaField, regUserIdField;

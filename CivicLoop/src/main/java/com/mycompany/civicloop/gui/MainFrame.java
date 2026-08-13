@@ -6,13 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-
 /**
  * Main dashboard after login.
  * Contains a JTabbedPane hosting all 5 module panels plus a profile header.
  */
-
-
 
 public class MainFrame extends JFrame {
     private DataStore dataStore;
