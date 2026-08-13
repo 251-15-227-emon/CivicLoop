@@ -1,11 +1,11 @@
 package civicloop.gui;
 
 import civicloop.model.CommunityPost;
+import civicloop.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class FeedPanel extends JPanel {
     private MainFrame parent;
@@ -136,14 +136,19 @@ public class FeedPanel extends JPanel {
         for (int i = allPosts.size() - 1; i >= 0; i--) {
             CommunityPost p = allPosts.get(i);
             if (!query.isEmpty()) {
-                String author = p.getAuthorId().toLowerCase();
-                if (!author.contains(query)) continue;
+                User author = parent.getDataStore().findUser(p.getAuthorId());
+                String authorName = (author != null) ? author.getName().toLowerCase() : "";
+                String authorId = p.getAuthorId().toLowerCase();
+                // Search both name and ID
+                if (!authorName.contains(query) && !authorId.contains(query)) {
+                    continue;
+                }
             }
             postListModel.addElement(p);
         }
     }
 
-    // Inner class: custom renderer for post cards (shows comments)
+    // Custom renderer: shows author name + ID, content, comments, likes
     private class PostCardRenderer extends JPanel implements ListCellRenderer<CommunityPost> {
         private JLabel authorLabel, metaLabel, likeLabel, commentCountLabel;
         private JTextArea contentArea, commentArea;
@@ -157,7 +162,7 @@ public class FeedPanel extends JPanel {
             ));
             setBackground(Color.WHITE);
 
-            // Header: author + timestamp
+            // Header: author (name + ID) and timestamp
             JPanel top = new JPanel(new BorderLayout());
             top.setOpaque(false);
             authorLabel = new JLabel();
@@ -170,7 +175,7 @@ public class FeedPanel extends JPanel {
             top.add(metaLabel, BorderLayout.EAST);
             add(top, BorderLayout.NORTH);
 
-            // Content (multiline)
+            // Content
             contentArea = new JTextArea();
             contentArea.setEditable(false);
             contentArea.setLineWrap(true);
@@ -191,17 +196,11 @@ public class FeedPanel extends JPanel {
             commentArea.setForeground(Color.DARK_GRAY);
             commentArea.setBackground(new Color(240, 244, 248));
             commentArea.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
-            commentPanel.add(new JScrollPane(commentArea) {
-                @Override
-                public Dimension getPreferredSize() {
-                    // Limit height to show up to 3 lines
-                    return new Dimension(0, 60);
-                }
-            }, BorderLayout.CENTER);
-            add(commentPanel, BorderLayout.SOUTH);
+            JScrollPane commentScroll = new JScrollPane(commentArea);
+            commentScroll.setPreferredSize(new Dimension(0, 60));
+            commentPanel.add(commentScroll, BorderLayout.CENTER);
 
-            // Like & comment count (will be added below comment area? or we can keep them separate)
-            // Actually we can add them in a small panel at the bottom.
+            // Stats (likes and comment count) below comments
             JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
             statsPanel.setOpaque(false);
             likeLabel = new JLabel("♥ 0");
@@ -210,11 +209,7 @@ public class FeedPanel extends JPanel {
             commentCountLabel = new JLabel("💬 0");
             commentCountLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
             statsPanel.add(commentCountLabel);
-            // Add stats below the comment panel, so we need a container
-            // For simplicity, we add it to SOUTH after commentPanel?
-            // I'll create a new panel for bottom and add both comment and stats.
-            // Since we already used SOUTH for commentPanel, we can replace with a wrapper.
-            // Let's rework: use a vertical box for the bottom part.
+
             JPanel bottomWrapper = new JPanel(new BorderLayout());
             bottomWrapper.setOpaque(false);
             bottomWrapper.add(commentPanel, BorderLayout.CENTER);
@@ -225,13 +220,19 @@ public class FeedPanel extends JPanel {
         @Override
         public Component getListCellRendererComponent(JList<? extends CommunityPost> list,
                 CommunityPost post, int index, boolean isSelected, boolean cellHasFocus) {
-            authorLabel.setText("👤 " + post.getAuthorId());
+            // Get author name
+            User author = parent.getDataStore().findUser(post.getAuthorId());
+            String authorDisplay = (author != null) ?
+                    author.getName() + " (" + post.getAuthorId() + ")" :
+                    post.getAuthorId();
+
+            authorLabel.setText("👤 " + authorDisplay);
             metaLabel.setText(post.getTimestamp());
             contentArea.setText(post.getContent());
             likeLabel.setText("♥ " + post.getLikes());
             commentCountLabel.setText("💬 " + post.getComments().size());
 
-            // Show comments (if any)
+            // Show comments
             StringBuilder sb = new StringBuilder();
             if (post.getComments().isEmpty()) {
                 sb.append("(No comments)");
