@@ -88,6 +88,6 @@ public class MainFrame extends JFrame {
 // Convenience getters for panels  
 
 
-    public DataStore getDataStore() { return dataStore; }
+  public DataStore getDataStore() { return dataStore; }
     public User getCurrentUser() { return currentUser; }
 }
