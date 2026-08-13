@@ -4,11 +4,7 @@ import civicloop.model.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-/**
- * SINGLE SOURCE OF TRUTH for all data.
- * Handles storage, business logic (exchange, trust updates), and file persistence.
- */
+import java.util.Map;
 
 public class DataStore implements Serializable {
 
@@ -17,7 +13,14 @@ public class DataStore implements Serializable {
     private ArrayList<Service> services;
     private ArrayList<TimeCreditTransaction> transactions;
     private ArrayList<CommunityPost> posts;
-    private HashMap<String, TrustScoreManager> trustManagers; // userId -> manager
+    private HashMap<String, TrustScoreManager> trustManagers;
+    private HashMap<String, String> itemBorrowerMap;
+
+    public static final int TRUST_INCREASE_BORROW = 5;
+    public static final int TRUST_INCREASE_SERVICE = 5;
+    public static final int TRUST_DECREASE_LATE_RETURN = 3;
+    public static final int TRUST_DECREASE_FAKE_REQUEST = 10;
+    public static final int TRUST_INCREASE_RETURN = 2;
 
     public DataStore() {
         users = new HashMap<>();
@@ -26,56 +29,50 @@ public class DataStore implements Serializable {
         transactions = new ArrayList<>();
         posts = new ArrayList<>();
         trustManagers = new HashMap<>();
+        itemBorrowerMap = new HashMap<>();
     }
 
+    // ---------- Registration ----------
     public String registerUser(String name, String area, String password) {
-    // 1000 থেকে 5000 এর মধ্যে একটি অব্যবহৃত ID খুঁজে বের করো
-    String newId = generateUserId();
-    User u = new User(name, area, password, newId);
-    users.put(u.getUserId(), u);
-    trustManagers.put(u.getUserId(), new TrustScoreManager(u.getUserId()));
-    return u.getUserId();
-}
-
-// নতুন মেথড: 1000-5000 রেঞ্জে একটি অব্যবহৃত ID তৈরি করে
-private String generateUserId() {
-    for (int id = 1000; id <= 5000; id++) {
-        String idStr = String.valueOf(id);
-        if (!users.containsKey(idStr)) {
-            return idStr;
-        }
+        String newId = generateUserId();
+        if (newId == null) return null;
+        User u = new User(name, area, password, newId);
+        users.put(u.getUserId(), u);
+        trustManagers.put(u.getUserId(), new TrustScoreManager(u.getUserId()));
+        return u.getUserId();
     }
-    
-    // সব ID ব্যবহার হয়ে গেলে (5000 জন ইউজার)
-    return null;
-}
 
+    private String generateUserId() {
+        for (int id = 1000; id <= 5000; id++) {
+            String idStr = String.valueOf(id);
+            if (!users.containsKey(idStr)) return idStr;
+        }
+        return null;
+    }
+
+    // ---------- Login ----------
     public User login(String userId, String password) {
         User u = users.get(userId);
         if (u != null && u.checkPassword(password)) return u;
-        return null; // login failed
+        return null;
     }
 
+    // ---------- Getters ----------
     public User findUser(String userId) { return users.get(userId); }
     public HashMap<String, User> getAllUsers() { return users; }
+    public int getTrustScore(String userId) {
+        TrustScoreManager tm = trustManagers.get(userId);
+        return tm != null ? tm.getScore() : 0;
+    }
 
-    
+    // ---------- Items ----------
     public void addItem(String itemName, User owner) {
         items.add(new Item(itemName, owner.getUserId()));
     }
-    
 
-
-    
     public ArrayList<Item> getItems() { return items; }
 
-    /**
-     * Core exchange logic for item borrowing (follows activity diagram).
-     * Borrower spends TimeCredits, owner earns them. Trust scores increase.
-     */
-
     public String requestItem(String itemId, User borrower, double hours) {
-
         Item item = findItemById(itemId);
         if (item == null) return "Item not found.";
         if (!item.isAvailable()) return "Item is already borrowed.";
@@ -85,34 +82,53 @@ private String generateUserId() {
         User owner = findUser(item.getOwnerId());
         if (owner == null) return "Owner not found.";
 
-        // Create transaction (polymorphism: Item implements Creditable)
+        double credit = hours * item.getCreditRate();
+        if (borrower.getTimeCreditBalance() < credit)
+            return "Insufficient TimeCredits. You need " + credit + " TC.";
+
         TimeCreditTransaction t = new TimeCreditTransaction(
                 borrower.getUserId(), owner.getUserId(), hours, item);
-
-        // Update balances
-        double credit = t.getCreditAmount();
         borrower.setTimeCreditBalance(borrower.getTimeCreditBalance() - credit);
         owner.setTimeCreditBalance(owner.getTimeCreditBalance() + credit);
 
-        
-        // Update trust scores (both gain trust)
-        trustManagers.get(borrower.getUserId()).increaseScore(5);
-        trustManagers.get(owner.getUserId()).increaseScore(5);
-        // Sync user objects
+        trustManagers.get(borrower.getUserId()).increaseScore(TRUST_INCREASE_BORROW);
+        trustManagers.get(owner.getUserId()).increaseScore(TRUST_INCREASE_BORROW);
         borrower.setTrustScore(trustManagers.get(borrower.getUserId()).getScore());
         owner.setTrustScore(trustManagers.get(owner.getUserId()).getScore());
 
         item.markBorrowed();
+        itemBorrowerMap.put(itemId, borrower.getUserId());
         transactions.add(t);
         return "Item borrowed successfully!";
     }
 
-    
+    public String returnItem(String itemId, User returner) {
+        Item item = findItemById(itemId);
+        if (item == null) return "Item not found.";
+        if (item.isAvailable()) return "Item is not currently borrowed.";
+
+        String borrowerId = itemBorrowerMap.get(itemId);
+        if (borrowerId == null) return "Borrower information missing.";
+        if (!returner.getUserId().equals(borrowerId) && !returner.getUserId().equals(item.getOwnerId()))
+            return "You are not authorized to return this item.";
+
+        item.markReturned();
+        itemBorrowerMap.remove(itemId);
+
+        if (returner.getUserId().equals(borrowerId)) {
+            trustManagers.get(borrowerId).increaseScore(TRUST_INCREASE_RETURN);
+            User borrower = findUser(borrowerId);
+            if (borrower != null) borrower.setTrustScore(trustManagers.get(borrowerId).getScore());
+        }
+        return "Item returned successfully.";
+    }
+
     private Item findItemById(String id) {
         for (Item i : items) if (i.getItemId().equals(id)) return i;
         return null;
     }
 
+    // ---------- Services ----------
     public void addService(String serviceType, User provider) {
         services.add(new Service(serviceType, provider.getUserId()));
     }
@@ -129,16 +145,17 @@ private String generateUserId() {
         User provider = findUser(s.getProviderId());
         if (provider == null) return "Provider not found.";
 
-        // Polymorphism again: Service implements Creditable (rate 1.0)
+        double credit = hours * s.getCreditRate();
+        if (seeker.getTimeCreditBalance() < credit)
+            return "Insufficient TimeCredits. You need " + credit + " TC.";
+
         TimeCreditTransaction t = new TimeCreditTransaction(
                 seeker.getUserId(), provider.getUserId(), hours, s);
-
-        double credit = t.getCreditAmount();
         seeker.setTimeCreditBalance(seeker.getTimeCreditBalance() - credit);
         provider.setTimeCreditBalance(provider.getTimeCreditBalance() + credit);
 
-        trustManagers.get(seeker.getUserId()).increaseScore(5);
-        trustManagers.get(provider.getUserId()).increaseScore(5);
+        trustManagers.get(seeker.getUserId()).increaseScore(TRUST_INCREASE_SERVICE);
+        trustManagers.get(provider.getUserId()).increaseScore(TRUST_INCREASE_SERVICE);
         seeker.setTrustScore(trustManagers.get(seeker.getUserId()).getScore());
         provider.setTrustScore(trustManagers.get(provider.getUserId()).getScore());
 
@@ -147,18 +164,26 @@ private String generateUserId() {
         return "Service requested successfully!";
     }
 
-    
+    public String completeService(String serviceId, User provider) {
+        Service s = findServiceById(serviceId);
+        if (s == null) return "Service not found.";
+        if (s.isAvailable()) return "Service is already available.";
+        if (!s.getProviderId().equals(provider.getUserId()))
+            return "You are not the provider of this service.";
+        s.markAvailable();
+        return "Service marked as complete and available.";
+    }
 
     private Service findServiceById(String id) {
         for (Service s : services) if (s.getServiceId().equals(id)) return s;
         return null;
     }
 
-    
+    // ---------- Trust reports ----------
     public void reportLateReturn(String userId) {
         TrustScoreManager tm = trustManagers.get(userId);
         if (tm != null) {
-            tm.decreaseScore(3);
+            tm.decreaseScore(TRUST_DECREASE_LATE_RETURN);
             findUser(userId).setTrustScore(tm.getScore());
         }
     }
@@ -166,17 +191,12 @@ private String generateUserId() {
     public void reportFakeRequest(String userId) {
         TrustScoreManager tm = trustManagers.get(userId);
         if (tm != null) {
-            tm.decreaseScore(10);
+            tm.decreaseScore(TRUST_DECREASE_FAKE_REQUEST);
             findUser(userId).setTrustScore(tm.getScore());
         }
     }
 
-     public int getTrustScore(String userId) {
-        TrustScoreManager tm = trustManagers.get(userId);
-        return tm != null ? tm.getScore() : 0;
-    }
-
-    // ---- Community Feed (Member 5) ----
+    // ---------- Community Feed ----------
     public void addPost(String authorId, String content) {
         posts.add(CommunityPost.createPost(authorId, content));
     }
@@ -192,11 +212,40 @@ private String generateUserId() {
         }
     }
 
-    
+    public void addCommentToPost(String postId, String commenterId, String comment) {
+        for (CommunityPost p : posts) {
+            if (p.getPostId().equals(postId)) {
+                p.addComment(commenterId + ": " + comment);
+                break;
+            }
+        }
+    }
 
+    // ---------- Transactions ----------
     public ArrayList<TimeCreditTransaction> getTransactions() { return transactions; }
 
-    // ---- File Persistence (java.io serialisation) ----
+    public ArrayList<Item> getItemsBorrowedByUser(String userId) {
+        ArrayList<Item> borrowed = new ArrayList<>();
+        for (Map.Entry<String, String> entry : itemBorrowerMap.entrySet()) {
+            if (entry.getValue().equals(userId)) {
+                Item item = findItemById(entry.getKey());
+                if (item != null) borrowed.add(item);
+            }
+        }
+        return borrowed;
+    }
+
+    public ArrayList<Service> getBusyServicesByProvider(String providerId) {
+        ArrayList<Service> busy = new ArrayList<>();
+        for (Service s : services) {
+            if (s.getProviderId().equals(providerId) && !s.isAvailable()) {
+                busy.add(s);
+            }
+        }
+        return busy;
+    }
+
+    // ---------- Persistence ----------
     public void saveToFile(String filename) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(this);
@@ -208,12 +257,4 @@ private String generateUserId() {
             return (DataStore) ois.readObject();
         }
     }
-
-
-
 }
-
-
-
-
-
