@@ -9,15 +9,18 @@ import java.util.ArrayList;
 /**
  * Community Feed where users can post messages and like posts.
  */
-public class FeedPanel extends JPanel {
+
+
+    public class FeedPanel extends JPanel {
+
     private MainFrame parent;
     private DefaultListModel<String> postListModel;
     private JList<String> postList;
     private JTextArea postInput;
 
     
-
     public FeedPanel(MainFrame parent) {
+
         this.parent = parent;
         setLayout(new BorderLayout());
 
@@ -64,10 +67,13 @@ public class FeedPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Select a post to like.");
             return;
         }
+
         // Extract postId from the beginning of the string (format: [id] ...)
         // For simplicity we find the post object by matching the displayed text.
         // A better approach: store post IDs in a parallel list. Here we search in DataStore.
+
         ArrayList<CommunityPost> posts = parent.getDataStore().getPosts();
+
         // The list is newest-first; find by matching toString()
         for (CommunityPost p : posts) {
             if (p.toString().equals(selected)) {
@@ -76,6 +82,7 @@ public class FeedPanel extends JPanel {
                 return;
             }
         }
+
         JOptionPane.showMessageDialog(this, "Post not found.");
     }
 
@@ -87,4 +94,5 @@ public class FeedPanel extends JPanel {
             postListModel.addElement(posts.get(i).toString());
         }
     }
+    
 }
