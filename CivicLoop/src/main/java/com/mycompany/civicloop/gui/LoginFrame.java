@@ -12,7 +12,6 @@ import java.io.IOException;
  * Uses DataStore for persistence – loads saved data on startup and saves on exit.
  */
 
-
 public class LoginFrame extends JFrame {
     private JTextField userIdField, nameField, areaField, regUserIdField;
     private JPasswordField passwordField, regPasswordField;
