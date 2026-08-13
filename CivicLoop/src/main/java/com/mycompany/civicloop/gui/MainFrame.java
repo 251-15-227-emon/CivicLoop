@@ -12,8 +12,6 @@ import java.io.IOException;
  * Contains a JTabbedPane hosting all 5 module panels plus a profile header.
  */
 
-
-
 public class MainFrame extends JFrame {
     private DataStore dataStore;
     private User currentUser;
@@ -88,6 +86,6 @@ public class MainFrame extends JFrame {
 // Convenience getters for panels  
 
 
-  public DataStore getDataStore() { return dataStore; }
+    public DataStore getDataStore() { return dataStore; }
     public User getCurrentUser() { return currentUser; }
 }
