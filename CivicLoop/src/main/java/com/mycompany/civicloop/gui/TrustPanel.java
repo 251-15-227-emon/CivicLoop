@@ -6,49 +6,74 @@ import java.awt.*;
 
 public class TrustPanel extends JPanel {
     private MainFrame parent;
-    private JLabel balanceLabel;
-    private JTable txTable;
-    private DefaultTableModel tableModel;
+    private JProgressBar progressBar;
+    private JLabel scoreLabel, statusLabel;
+    private JTextArea profileArea;
 
-    public TimeBankPanel(MainFrame parent) {
+    public TrustPanel(MainFrame parent) {
         this.parent = parent;
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5,5,5,5);
 
-        // Balance display at the top
-        balanceLabel = new JLabel();
-        balanceLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        add(balanceLabel, BorderLayout.NORTH);
+        // Profile info
+        gbc.gridx=0; gbc.gridy=0; gbc.gridwidth=2;
+        profileArea = new JTextArea(5, 30);
+        profileArea.setEditable(false);
+        add(new JScrollPane(profileArea), gbc);
 
-        // Transaction table
-        tableModel = new DefaultTableModel(
-                new String[]{"ID","From","To","Hours","Credits","Type"}, 0);
-        txTable = new JTable(tableModel);
-        add(new JScrollPane(txTable), BorderLayout.CENTER);
+        // Trust score progress bar
+        gbc.gridy=1; gbc.gridwidth=1;
+        add(new JLabel("Trust Score:"), gbc);
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setStringPainted(true);
+        gbc.gridx=1;
+        add(progressBar, gbc);
+
+        scoreLabel = new JLabel();
+        gbc.gridx=0; gbc.gridy=2; gbc.gridwidth=2;
+        add(scoreLabel, gbc);
+
+        statusLabel = new JLabel();
+        gbc.gridy=3;
+        add(statusLabel, gbc);
+
+        // Buttons for manual reports
+        JPanel btnPanel = new JPanel(new FlowLayout());
+        JButton lateBtn = new JButton("Report Late Return");
+        JButton fakeBtn = new JButton("Report Fake Request");
+        btnPanel.add(lateBtn);
+        btnPanel.add(fakeBtn);
+        gbc.gridy=4;
+        add(btnPanel, gbc);
+
+        lateBtn.addActionListener(e -> {
+            parent.getDataStore().reportLateReturn(parent.getCurrentUser().getUserId());
+            parent.refreshAll();
+        });
+        fakeBtn.addActionListener(e -> {
+            parent.getDataStore().reportFakeRequest(parent.getCurrentUser().getUserId());
+            parent.refreshAll();
+        });
 
         refresh();
     }
 
-
-    
     public void refresh() {
-        String uid = parent.getCurrentUser().getUserId();
-        balanceLabel.setText("Your TimeCredit Balance: " +
-                parent.getCurrentUser().getTimeCreditBalance() + " TC");
+        User user = parent.getCurrentUser();
+        int score = parent.getDataStore().getTrustScore(user.getUserId());
+        progressBar.setValue(score);
+        scoreLabel.setText("Score: " + score + "/100");
 
+        String desc;
+        if (score >= 80) desc = "Excellent community member";
+        else if (score >= 50) desc = "Good standing";
+        else if (score >= 30) desc = "Low trust – be cautious";
+        else desc = "Very low trust – unreliable";
+        statusLabel.setText(desc);
 
-        tableModel.setRowCount(0);
-        for (TimeCreditTransaction t : parent.getDataStore().getTransactions()) {
-            // Show only transactions involving this user
-            if (t.getFromUserId().equals(uid) || t.getToUserId().equals(uid)) {
-                tableModel.addRow(new Object[]{
-                        t.getTransactionId(),
-                        t.getFromUserId(),
-                        t.getToUserId(),
-                        t.getHoursSpent(),
-                        t.getCreditAmount(),
-                        t.getType()
-                });
-            }
-        }
+        profileArea.setText("Name: " + user.getName() +
+                "\nArea: " + user.getArea() +
+                "\nSkills: " + String.join(", ", user.getSkills()));
     }
 }
