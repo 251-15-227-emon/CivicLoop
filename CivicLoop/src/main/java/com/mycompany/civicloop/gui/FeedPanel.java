@@ -5,12 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-
-/**
- * Community Feed where users can post messages and like posts.
- */
-
-
     public class FeedPanel extends JPanel {
 
     private MainFrame parent;
@@ -57,7 +51,8 @@ import java.util.ArrayList;
         }
         parent.getDataStore().addPost(parent.getCurrentUser().getUserId(), content);
         postInput.setText("");
-        parent.refreshAll();  // refresh feed and other tabs
+        parent.refreshAll(); 
+         // refresh feed and other tabs
     }
 
     
