@@ -6,10 +6,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-/**
- * Panel for adding items and requesting to borrow them.
- */
-
 public class ItemPanel extends JPanel {
     private MainFrame parent;
     private JTable itemTable;
@@ -19,13 +15,11 @@ public class ItemPanel extends JPanel {
         this.parent = parent;
         setLayout(new BorderLayout());
 
-        // Table columns: ID, Name, Owner, Available
         tableModel = new DefaultTableModel(new String[]{"ID","Name","Owner","Available"}, 0);
         itemTable = new JTable(tableModel);
         JScrollPane scroll = new JScrollPane(itemTable);
         add(scroll, BorderLayout.CENTER);
 
-        // Bottom panel with Add and Request buttons
         JPanel bottom = new JPanel(new FlowLayout());
         JButton addBtn = new JButton("Add Item");
         JButton requestBtn = new JButton("Request Selected Item");
@@ -52,24 +46,22 @@ public class ItemPanel extends JPanel {
             return;
         }
         String itemId = (String) tableModel.getValueAt(row, 0);
-        // Validate numeric hours
         String hoursStr = JOptionPane.showInputDialog(this, "How many hours to borrow?");
         if (hoursStr == null) return;
         try {
             double hours = Double.parseDouble(hoursStr);
             if (hours <= 0) throw new IllegalArgumentException("Hours must be positive.");
-            // The business logic is in DataStore
             String result = parent.getDataStore().requestItem(itemId, parent.getCurrentUser(), hours);
             JOptionPane.showMessageDialog(this, result);
             parent.refreshAll();
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Invalid number – please enter a valid decimal.");
+            JOptionPane.showMessageDialog(this, "Invalid number - please enter a valid decimal.");
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
 
-public void refreshTable() {
+    public void refreshTable() {
         tableModel.setRowCount(0);
         for (Item i : parent.getDataStore().getItems()) {
             User owner = parent.getDataStore().findUser(i.getOwnerId());
