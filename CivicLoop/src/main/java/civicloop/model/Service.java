@@ -1,44 +1,132 @@
-package civicloop.model;
+package civicloop.gui;
 
-import java.io.Serializable;
-import java.util.UUID;
+import civicloop.model.Service;
+import civicloop.model.User;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
 
+public class ServicePanel extends JPanel {
+    private MainFrame parent;
+    private JTable serviceTable;
+    private DefaultTableModel tableModel;
+    private JButton completeBtn;
 
-public class Service implements Creditable, Serializable {
-    
-    private String serviceId;
-    private String serviceType;  
-    private String providerId;
-    private boolean isAvailable;  
+    public ServicePanel(MainFrame parent) {
+        this.parent = parent;
+        setLayout(new BorderLayout());
+        UITheme.stylePanel(this);
 
+        tableModel = new DefaultTableModel(new String[]{"ID", "Service", "Provider", "Status"}, 0) {
+            @Override public boolean isCellEditable(int row, int col) { return false; }
+        };
+        serviceTable = new JTable(tableModel);
+        serviceTable.setRowHeight(24);
+        serviceTable.setFont(UITheme.LABEL_FONT);
+        serviceTable.getTableHeader().setFont(UITheme.BUTTON_FONT);
+        serviceTable.getTableHeader().setBackground(UITheme.SECONDARY);
+        serviceTable.getTableHeader().setForeground(Color.WHITE);
+        serviceTable.setShowGrid(false);
+        serviceTable.setIntercellSpacing(new Dimension(0, 0));
+        serviceTable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : UITheme.TABLE_ALT_ROW);
+                }
+                return c;
+            }
+        });
+        JScrollPane scroll = new JScrollPane(serviceTable);
+        scroll.setBorder(UITheme.COMPOUND_BORDER);
+        add(scroll, BorderLayout.CENTER);
 
-    public Service(String serviceType, String providerId) {
-        this.serviceId = UUID.randomUUID().toString().substring(0, 8);
-        this.serviceType = serviceType;
-        this.providerId = providerId;
-        this.isAvailable = true;
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        bottom.setBackground(UITheme.PANEL_BG);
+
+        JButton offerBtn = new JButton("Offer Service");
+        UITheme.styleButton(offerBtn);
+        bottom.add(offerBtn);
+
+        JButton requestBtn = new JButton("Request Selected");
+        UITheme.styleButton(requestBtn);
+        bottom.add(requestBtn);
+
+        completeBtn = new JButton("Complete Selected (Provider)");
+        UITheme.styleButton(completeBtn);
+        completeBtn.setBackground(UITheme.SUCCESS);
+        bottom.add(completeBtn);
+
+        add(bottom, BorderLayout.SOUTH);
+
+        offerBtn.addActionListener(e -> offerService());
+        requestBtn.addActionListener(e -> requestService());
+        completeBtn.addActionListener(e -> completeService());
+
+        refreshTable();
     }
 
-    // ---------- Creditable interface ----------
-
-    @Override
-    public double getCreditRate() {
-        return 1.0;   // 1 hour of active work = 1 TimeCredit
+    private void offerService() {
+        String type = JOptionPane.showInputDialog(this, "Enter service type (e.g., Guitar Teaching):");
+        if (type == null || type.trim().isEmpty()) return;
+        parent.getDataStore().addService(type.trim(), parent.getCurrentUser());
+        parent.refreshAll();
     }
 
-    @Override
-    public String getOfferType() {
-        return "Service";
+    private void requestService() {
+        int row = serviceTable.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Select a service first.");
+            return;
+        }
+        String serviceId = (String) tableModel.getValueAt(row, 0);
+        String hoursStr = JOptionPane.showInputDialog(this, "How many hours of service?");
+        if (hoursStr == null) return;
+        try {
+            double hours = Double.parseDouble(hoursStr);
+            if (hours <= 0) throw new IllegalArgumentException("Must be positive.");
+            String result = parent.getDataStore().requestService(serviceId, parent.getCurrentUser(), hours);
+            JOptionPane.showMessageDialog(this, result);
+            parent.refreshAll();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid number.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }
 
-    // ---------- Getters & business methods ----------
+    private void completeService() {
+        // Show a list of busy services provided by current user
+        List<Service> busy = parent.getDataStore().getBusyServicesByProvider(
+                parent.getCurrentUser().getUserId());
+        if (busy.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "You have no busy services to complete.");
+            return;
+        }
+        String[] options = busy.stream().map(s -> s.getServiceType() + " (" + s.getServiceId() + ")")
+                .toArray(String[]::new);
+        String selected = (String) JOptionPane.showInputDialog(this,
+                "Select a service to complete:", "Complete Service",
+                JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        if (selected == null) return;
+        String serviceId = selected.substring(selected.lastIndexOf('(') + 1, selected.lastIndexOf(')'));
+        String result = parent.getDataStore().completeService(serviceId, parent.getCurrentUser());
+        JOptionPane.showMessageDialog(this, result);
+        parent.refreshAll();
+    }
 
-    public String getServiceId() { return serviceId; }
-    public String getServiceType() { return serviceType; }
-    public String getProviderId() { return providerId; }
-    public boolean isAvailable() { return isAvailable; }
-
-    public void markBusy() { this.isAvailable = false; }
-    public void markAvailable() { this.isAvailable = true; }
+    public void refreshTable() {
+        tableModel.setRowCount(0);
+        for (Service s : parent.getDataStore().getServices()) {
+            User provider = parent.getDataStore().findUser(s.getProviderId());
+            String name = provider != null ? provider.getName() : "Unknown";
+            tableModel.addRow(new Object[]{
+                    s.getServiceId(), s.getServiceType(), name,
+                    s.isAvailable() ? "Available" : "Busy"
+            });
+        }
+    }
 }
-
