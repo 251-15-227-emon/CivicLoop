@@ -1,15 +1,10 @@
 package civicloop.gui;
 
-import civicloop.model.TimeCreditTransaction;
+import civicloop.model.User;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-/**
- * Shows the current user's transaction history and TimeCredit balance.
- */
-
-public class TimeBankPanel extends JPanel {
+public class TrustPanel extends JPanel {
     private MainFrame parent;
     private JLabel balanceLabel;
     private JTable txTable;
