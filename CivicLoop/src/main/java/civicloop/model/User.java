@@ -34,6 +34,5 @@ public class User implements Serializable {
     public void setTrustScore(int trustScore) { this.trustScore = Math.max(0, trustScore); }
     public double getTimeCreditBalance() { return timeCreditBalance; }
     public void setTimeCreditBalance(double balance) { this.timeCreditBalance = balance; }
-
     public void addSkill(String skill) { skills.add(skill); }
 }
