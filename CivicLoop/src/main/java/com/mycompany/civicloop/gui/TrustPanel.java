@@ -16,13 +16,11 @@ public class TrustPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5,5,5,5);
 
-        // Profile info
         gbc.gridx=0; gbc.gridy=0; gbc.gridwidth=2;
         profileArea = new JTextArea(5, 30);
         profileArea.setEditable(false);
         add(new JScrollPane(profileArea), gbc);
 
-        // Trust score progress bar
         gbc.gridy=1; gbc.gridwidth=1;
         add(new JLabel("Trust Score:"), gbc);
         progressBar = new JProgressBar(0, 100);
@@ -38,7 +36,6 @@ public class TrustPanel extends JPanel {
         gbc.gridy=3;
         add(statusLabel, gbc);
 
-        // Buttons for manual reports
         JPanel btnPanel = new JPanel(new FlowLayout());
         JButton lateBtn = new JButton("Report Late Return");
         JButton fakeBtn = new JButton("Report Fake Request");
