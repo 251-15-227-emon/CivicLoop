@@ -1,7 +1,6 @@
 package civicloop.model;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 public class Item implements Creditable, Serializable {
     private String itemId;
@@ -9,22 +8,17 @@ public class Item implements Creditable, Serializable {
     private String ownerId;
     private boolean isAvailable;
 
-    public Item(String itemName, String ownerId) {
-        this.itemId = UUID.randomUUID().toString().substring(0, 8);
+    public Item(String itemId, String itemName, String ownerId) {
+        this.itemId = itemId;
         this.itemName = itemName;
         this.ownerId = ownerId;
         this.isAvailable = true;
     }
 
     @Override
-    public double getCreditRate() {
-        return 0.5;
-    }
-
+    public double getCreditRate() { return 0.5; }
     @Override
-    public String getOfferType() {
-        return "Item";
-    }
+    public String getOfferType() { return "Item"; }
 
     public String getItemId() { return itemId; }
     public String getItemName() { return itemName; }

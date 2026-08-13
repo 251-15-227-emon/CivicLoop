@@ -1,7 +1,6 @@
 package civicloop.model;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 public class TimeCreditTransaction implements Serializable {
     private String transactionId;
@@ -11,20 +10,17 @@ public class TimeCreditTransaction implements Serializable {
     private double creditAmount;
     private String type;
 
-    public TimeCreditTransaction(String fromUserId, String toUserId,
+    public TimeCreditTransaction(String transactionId, String fromUserId, String toUserId,
                                  double hoursSpent, Creditable offer) {
-        this.transactionId = UUID.randomUUID().toString().substring(0, 8);
+        this.transactionId = transactionId;
         this.fromUserId = fromUserId;
         this.toUserId = toUserId;
         this.hoursSpent = hoursSpent;
-        this.creditAmount = calculateCredit(hoursSpent, offer);
+        this.creditAmount = hoursSpent * offer.getCreditRate();
         this.type = offer.getOfferType();
     }
 
-    private double calculateCredit(double hours, Creditable offer) {
-        return hours * offer.getCreditRate();
-    }
-
+    // Getters (unchanged)
     public String getTransactionId() { return transactionId; }
     public String getFromUserId() { return fromUserId; }
     public String getToUserId() { return toUserId; }

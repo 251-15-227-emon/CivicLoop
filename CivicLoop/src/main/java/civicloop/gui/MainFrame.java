@@ -10,7 +10,7 @@ public class MainFrame extends JFrame {
     private DataStore dataStore;
     private User currentUser;
     private JLabel welcomeLabel;
-    private JButton logoutBtn;
+    private JButton logoutBtn, refreshBtn;
     private ItemPanel itemPanel;
     private ServicePanel servicePanel;
     private TimeBankPanel timeBankPanel;
@@ -26,7 +26,7 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // ---- Gradient Header Panel ----
+        // ---- Gradient Header ----
         JPanel header = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -39,19 +39,50 @@ public class MainFrame extends JFrame {
             }
         };
         header.setOpaque(false);
-        header.setBorder(BorderFactory.createEmptyBorder(12, 18, 12, 18));
+        header.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
-        // Welcome label
         welcomeLabel = new JLabel();
         welcomeLabel.setForeground(Color.WHITE);
         welcomeLabel.setFont(UITheme.HEADER_FONT);
         header.add(welcomeLabel, BorderLayout.WEST);
 
-        // Logout button
+        // ডান পাশে বাটনগুলোর জন্য প্যানেল
+        JPanel rightButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        rightButtons.setOpaque(false);
+
+        refreshBtn = new JButton("↻ Refresh Data");
+        UITheme.styleButton(refreshBtn);
+        refreshBtn.setBackground(UITheme.SUCCESS);
+        rightButtons.add(refreshBtn);
+
         logoutBtn = new JButton("Logout");
         UITheme.styleButton(logoutBtn);
         logoutBtn.setBackground(UITheme.DANGER);
-        header.add(logoutBtn, BorderLayout.EAST);
+        rightButtons.add(logoutBtn);
+
+        header.add(rightButtons, BorderLayout.EAST);
+
+        // ---- Refresh action ----
+        refreshBtn.addActionListener(e -> {
+            try {
+                dataStore.reloadFromFile("civicloop_data.dat");
+                User updatedUser = dataStore.findUser(currentUser.getUserId());
+                if (updatedUser != null) {
+                    currentUser = updatedUser;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Your user account no longer exists. Logging out.");
+                    dispose();
+                    new LoginFrame().setVisible(true);
+                    return;
+                }
+                refreshAll();
+                JOptionPane.showMessageDialog(this, "Data reloaded from disk successfully.", "Refresh", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException | ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "Failed to reload data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // ---- Logout action ----
         logoutBtn.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this,
                     "Are you sure you want to logout?", "Logout",
@@ -68,7 +99,6 @@ public class MainFrame extends JFrame {
         // ---- Tabbed Panels ----
         JTabbedPane tabs = new JTabbedPane();
         tabs.setFont(UITheme.BUTTON_FONT);
-        tabs.setBackground(UITheme.PANEL_BG);
 
         itemPanel = new ItemPanel(this);
         servicePanel = new ServicePanel(this);
@@ -85,7 +115,6 @@ public class MainFrame extends JFrame {
 
         refreshAll();
 
-        // Save data when window closes
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -94,9 +123,6 @@ public class MainFrame extends JFrame {
         });
     }
 
-    /**
-     * Save data to the file.
-     */
     private void saveData() {
         try {
             dataStore.saveToFile("civicloop_data.dat");
@@ -107,9 +133,6 @@ public class MainFrame extends JFrame {
         }
     }
 
-    /**
-     * Refresh all panels to reflect the latest data.
-     */
     public void refreshAll() {
         welcomeLabel.setText("👋 " + currentUser.getName() +
                 "  |  Area: " + currentUser.getArea() +
@@ -122,7 +145,6 @@ public class MainFrame extends JFrame {
         feedPanel.refresh();
     }
 
-    // ---- Getters for child panels ----
     public DataStore getDataStore() { return dataStore; }
     public User getCurrentUser() { return currentUser; }
 }
