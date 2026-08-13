@@ -12,7 +12,6 @@ import java.util.HashMap;
 
 public class DataStore implements Serializable {
 
-
     private HashMap<String, User> users;
     private ArrayList<Item> items;
     private ArrayList<Service> services;
@@ -46,6 +45,7 @@ private String generateUserId() {
             return idStr;
         }
     }
+    
     // সব ID ব্যবহার হয়ে গেলে (5000 জন ইউজার)
     return null;
 }
