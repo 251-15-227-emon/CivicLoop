@@ -16,11 +16,18 @@ public class DataStore implements Serializable {
     private HashMap<String, TrustScoreManager> trustManagers;
     private HashMap<String, String> itemBorrowerMap;
 
+    // Counters for numeric IDs
+    private int nextItemId = 1;
+    private int nextServiceId = 1;
+    private int nextTransactionId = 1;
+    private int nextPostId = 1;
+
     public static final int TRUST_INCREASE_BORROW = 5;
     public static final int TRUST_INCREASE_SERVICE = 5;
     public static final int TRUST_DECREASE_LATE_RETURN = 3;
     public static final int TRUST_DECREASE_FAKE_REQUEST = 10;
     public static final int TRUST_INCREASE_RETURN = 2;
+    public static final double INITIAL_TC = 10.0;
 
     public DataStore() {
         users = new HashMap<>();
@@ -32,11 +39,18 @@ public class DataStore implements Serializable {
         itemBorrowerMap = new HashMap<>();
     }
 
-    // ---------- Registration ----------
+    // ---- ID generators ----
+    public String getNextItemId() { return String.valueOf(nextItemId++); }
+    public String getNextServiceId() { return String.valueOf(nextServiceId++); }
+    public String getNextTransactionId() { return String.valueOf(nextTransactionId++); }
+    public String getNextPostId() { return String.valueOf(nextPostId++); }
+
+    // ---- Registration ----
     public String registerUser(String name, String area, String password) {
         String newId = generateUserId();
         if (newId == null) return null;
         User u = new User(name, area, password, newId);
+        u.setTimeCreditBalance(INITIAL_TC); // give initial credits
         users.put(u.getUserId(), u);
         trustManagers.put(u.getUserId(), new TrustScoreManager(u.getUserId()));
         return u.getUserId();
@@ -50,14 +64,14 @@ public class DataStore implements Serializable {
         return null;
     }
 
-    // ---------- Login ----------
+    // ---- Login ----
     public User login(String userId, String password) {
         User u = users.get(userId);
         if (u != null && u.checkPassword(password)) return u;
         return null;
     }
 
-    // ---------- Getters ----------
+    // ---- Getters ----
     public User findUser(String userId) { return users.get(userId); }
     public HashMap<String, User> getAllUsers() { return users; }
     public int getTrustScore(String userId) {
@@ -65,9 +79,10 @@ public class DataStore implements Serializable {
         return tm != null ? tm.getScore() : 0;
     }
 
-    // ---------- Items ----------
+    // ---- Items ----
     public void addItem(String itemName, User owner) {
-        items.add(new Item(itemName, owner.getUserId()));
+        Item item = new Item(getNextItemId(), itemName, owner.getUserId());
+        items.add(item);
     }
 
     public ArrayList<Item> getItems() { return items; }
@@ -87,7 +102,9 @@ public class DataStore implements Serializable {
             return "Insufficient TimeCredits. You need " + credit + " TC.";
 
         TimeCreditTransaction t = new TimeCreditTransaction(
-                borrower.getUserId(), owner.getUserId(), hours, item);
+                getNextTransactionId(),
+                borrower.getUserId(), owner.getUserId(),
+                hours, item);
         borrower.setTimeCreditBalance(borrower.getTimeCreditBalance() - credit);
         owner.setTimeCreditBalance(owner.getTimeCreditBalance() + credit);
 
@@ -128,9 +145,10 @@ public class DataStore implements Serializable {
         return null;
     }
 
-    // ---------- Services ----------
+    // ---- Services ----
     public void addService(String serviceType, User provider) {
-        services.add(new Service(serviceType, provider.getUserId()));
+        Service s = new Service(getNextServiceId(), serviceType, provider.getUserId());
+        services.add(s);
     }
 
     public ArrayList<Service> getServices() { return services; }
@@ -150,7 +168,9 @@ public class DataStore implements Serializable {
             return "Insufficient TimeCredits. You need " + credit + " TC.";
 
         TimeCreditTransaction t = new TimeCreditTransaction(
-                seeker.getUserId(), provider.getUserId(), hours, s);
+                getNextTransactionId(),
+                seeker.getUserId(), provider.getUserId(),
+                hours, s);
         seeker.setTimeCreditBalance(seeker.getTimeCreditBalance() - credit);
         provider.setTimeCreditBalance(provider.getTimeCreditBalance() + credit);
 
@@ -179,26 +199,29 @@ public class DataStore implements Serializable {
         return null;
     }
 
-    // ---------- Trust reports ----------
-    public void reportLateReturn(String userId) {
-        TrustScoreManager tm = trustManagers.get(userId);
+    // ---- Trust reports (target another user) ----
+    public void reportLateReturn(String targetUserId) {
+        TrustScoreManager tm = trustManagers.get(targetUserId);
         if (tm != null) {
             tm.decreaseScore(TRUST_DECREASE_LATE_RETURN);
-            findUser(userId).setTrustScore(tm.getScore());
+            User u = findUser(targetUserId);
+            if (u != null) u.setTrustScore(tm.getScore());
         }
     }
 
-    public void reportFakeRequest(String userId) {
-        TrustScoreManager tm = trustManagers.get(userId);
+    public void reportFakeRequest(String targetUserId) {
+        TrustScoreManager tm = trustManagers.get(targetUserId);
         if (tm != null) {
             tm.decreaseScore(TRUST_DECREASE_FAKE_REQUEST);
-            findUser(userId).setTrustScore(tm.getScore());
+            User u = findUser(targetUserId);
+            if (u != null) u.setTrustScore(tm.getScore());
         }
     }
 
-    // ---------- Community Feed ----------
+    // ---- Community Feed ----
     public void addPost(String authorId, String content) {
-        posts.add(CommunityPost.createPost(authorId, content));
+        CommunityPost p = CommunityPost.createPost(getNextPostId(), authorId, content);
+        posts.add(p);
     }
 
     public ArrayList<CommunityPost> getPosts() { return posts; }
@@ -221,7 +244,7 @@ public class DataStore implements Serializable {
         }
     }
 
-    // ---------- Transactions ----------
+    // ---- Transactions ----
     public ArrayList<TimeCreditTransaction> getTransactions() { return transactions; }
 
     public ArrayList<Item> getItemsBorrowedByUser(String userId) {
@@ -245,7 +268,7 @@ public class DataStore implements Serializable {
         return busy;
     }
 
-    // ---------- Persistence ----------
+    // ---- Persistence ----
     public void saveToFile(String filename) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(this);
@@ -256,5 +279,21 @@ public class DataStore implements Serializable {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             return (DataStore) ois.readObject();
         }
+    }
+
+    // ---- Reload from file (for multi-window sync) ----
+    public void reloadFromFile(String filename) throws IOException, ClassNotFoundException {
+        DataStore loaded = loadFromFile(filename);
+        this.users.clear(); this.users.putAll(loaded.users);
+        this.items.clear(); this.items.addAll(loaded.items);
+        this.services.clear(); this.services.addAll(loaded.services);
+        this.transactions.clear(); this.transactions.addAll(loaded.transactions);
+        this.posts.clear(); this.posts.addAll(loaded.posts);
+        this.trustManagers.clear(); this.trustManagers.putAll(loaded.trustManagers);
+        this.itemBorrowerMap.clear(); this.itemBorrowerMap.putAll(loaded.itemBorrowerMap);
+        this.nextItemId = loaded.nextItemId;
+        this.nextServiceId = loaded.nextServiceId;
+        this.nextTransactionId = loaded.nextTransactionId;
+        this.nextPostId = loaded.nextPostId;
     }
 }

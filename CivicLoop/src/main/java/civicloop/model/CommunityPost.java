@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
 public class CommunityPost implements Serializable {
     private String postId;
@@ -14,8 +13,8 @@ public class CommunityPost implements Serializable {
     private int likes;
     private ArrayList<String> comments;
 
-    private CommunityPost(String authorId, String content) {
-        this.postId = UUID.randomUUID().toString().substring(0, 8);
+    private CommunityPost(String postId, String authorId, String content) {
+        this.postId = postId;
         this.authorId = authorId;
         this.content = content;
         this.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
@@ -23,8 +22,8 @@ public class CommunityPost implements Serializable {
         this.comments = new ArrayList<>();
     }
 
-    public static CommunityPost createPost(String authorId, String content) {
-        return new CommunityPost(authorId, content);
+    public static CommunityPost createPost(String postId, String authorId, String content) {
+        return new CommunityPost(postId, authorId, content);
     }
 
     public void addLike() { likes++; }

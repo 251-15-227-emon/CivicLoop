@@ -7,23 +7,26 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemPanel extends JPanel {
     private MainFrame parent;
     private JTable itemTable;
     private DefaultTableModel tableModel;
+    private JTextField searchField;
+    private List<Item> allItems;  // ফিল্টার করার জন্য মূল ডেটা
 
     public ItemPanel(MainFrame parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
         UITheme.stylePanel(this);
 
+        // টেবিল সেটআপ (আগের মতো)
         tableModel = new DefaultTableModel(new String[]{"ID", "Name", "Owner", "Status"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int col) { return false; }
+            @Override public boolean isCellEditable(int row, int col) { return false; }
         };
         itemTable = new JTable(tableModel);
-        itemTable.setRowHeight(24);
+        itemTable.setRowHeight(28);
         itemTable.setFont(UITheme.LABEL_FONT);
         itemTable.getTableHeader().setFont(UITheme.BUTTON_FONT);
         itemTable.getTableHeader().setBackground(UITheme.SECONDARY);
@@ -45,33 +48,54 @@ public class ItemPanel extends JPanel {
         scroll.setBorder(UITheme.COMPOUND_BORDER);
         add(scroll, BorderLayout.CENTER);
 
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        // নিচের প্যানেল (বাটন + সার্চ)
+        JPanel bottom = new JPanel(new BorderLayout(8, 8));
         bottom.setBackground(UITheme.PANEL_BG);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        buttonPanel.setOpaque(false);
 
         JButton addBtn = new JButton("Add Item");
         UITheme.styleButton(addBtn);
-        bottom.add(addBtn);
+        buttonPanel.add(addBtn);
 
         JButton requestBtn = new JButton("Request Selected");
         UITheme.styleButton(requestBtn);
-        bottom.add(requestBtn);
+        buttonPanel.add(requestBtn);
 
         JButton returnBtn = new JButton("Return Selected");
         UITheme.styleButton(returnBtn);
         returnBtn.setBackground(UITheme.SUCCESS);
-        bottom.add(returnBtn);
+        buttonPanel.add(returnBtn);
 
-        JButton refreshBtn = new JButton("Refresh");
-        UITheme.styleButton(refreshBtn);
-        refreshBtn.setBackground(UITheme.SECONDARY);
-        bottom.add(refreshBtn);
+        bottom.add(buttonPanel, BorderLayout.WEST);
 
+        // সার্চ অংশ
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        searchPanel.setOpaque(false);
+        searchPanel.add(new JLabel("Search by Owner:"));
+        searchField = new JTextField(12);
+        searchField.setFont(UITheme.LABEL_FONT);
+        searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
+        UITheme.styleButton(searchBtn);
+        searchBtn.setBackground(UITheme.SECONDARY);
+        searchPanel.add(searchBtn);
+        JButton clearBtn = new JButton("Clear");
+        UITheme.styleButton(clearBtn);
+        clearBtn.setBackground(UITheme.WARNING);
+        searchPanel.add(clearBtn);
+
+        bottom.add(searchPanel, BorderLayout.EAST);
         add(bottom, BorderLayout.SOUTH);
 
+        // অ্যাকশন লিসনার
         addBtn.addActionListener(e -> addItem());
         requestBtn.addActionListener(e -> requestItem());
         returnBtn.addActionListener(e -> returnItem());
-        refreshBtn.addActionListener(e -> refreshTable());
+        searchBtn.addActionListener(e -> filterItems());
+        clearBtn.addActionListener(e -> { searchField.setText(""); filterItems(); });
+        searchField.addActionListener(e -> filterItems()); // Enter চাপলেও সার্চ
 
         refreshTable();
     }
@@ -127,6 +151,25 @@ public class ItemPanel extends JPanel {
         parent.refreshAll();
     }
 
+    private void filterItems() {
+        String query = searchField.getText().trim().toLowerCase();
+        tableModel.setRowCount(0);
+        List<Item> filtered = allItems.stream()
+                .filter(item -> {
+                    if (query.isEmpty()) return true;
+                    User owner = parent.getDataStore().findUser(item.getOwnerId());
+                    String ownerName = owner != null ? owner.getName().toLowerCase() : "";
+                    return ownerName.contains(query);
+                })
+                .collect(Collectors.toList());
+        for (Item i : filtered) {
+            User owner = parent.getDataStore().findUser(i.getOwnerId());
+            String ownerName = owner != null ? owner.getName() : "Unknown";
+            String status = i.isAvailable() ? "Available" : "Borrowed";
+            tableModel.addRow(new Object[]{i.getItemId(), i.getItemName(), ownerName, status});
+        }
+    }
+
     private void saveData() {
         try {
             parent.getDataStore().saveToFile("civicloop_data.dat");
@@ -136,12 +179,7 @@ public class ItemPanel extends JPanel {
     }
 
     public void refreshTable() {
-        tableModel.setRowCount(0);
-        for (Item i : parent.getDataStore().getItems()) {
-            User owner = parent.getDataStore().findUser(i.getOwnerId());
-            String ownerName = owner != null ? owner.getName() : "Unknown";
-            String status = i.isAvailable() ? "Available" : "Borrowed";
-            tableModel.addRow(new Object[]{i.getItemId(), i.getItemName(), ownerName, status});
-        }
+        allItems = parent.getDataStore().getItems();  // মূল ডেটা সেভ
+        filterItems();  // বর্তমান সার্চ শর্তে আপডেট
     }
 }

@@ -1,6 +1,7 @@
 package civicloop.gui;
 
 import civicloop.model.TimeCreditTransaction;
+import civicloop.model.User;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -23,11 +24,11 @@ public class TimeBankPanel extends JPanel {
         add(balanceLabel, BorderLayout.NORTH);
 
         tableModel = new DefaultTableModel(
-                new String[]{"ID", "From", "To", "Hours", "Credits", "Type", "Details"}, 0) {
+                new String[]{"ID", "From", "To", "Hours", "Credits", "Type"}, 0) {
             @Override public boolean isCellEditable(int row, int col) { return false; }
         };
         txTable = new JTable(tableModel);
-        txTable.setRowHeight(24);
+        txTable.setRowHeight(28);
         txTable.setFont(UITheme.LABEL_FONT);
         txTable.getTableHeader().setFont(UITheme.BUTTON_FONT);
         txTable.getTableHeader().setBackground(UITheme.SECONDARY);
@@ -60,14 +61,17 @@ public class TimeBankPanel extends JPanel {
         tableModel.setRowCount(0);
         for (TimeCreditTransaction t : parent.getDataStore().getTransactions()) {
             if (t.getFromUserId().equals(uid) || t.getToUserId().equals(uid)) {
+                User fromUser = parent.getDataStore().findUser(t.getFromUserId());
+                User toUser = parent.getDataStore().findUser(t.getToUserId());
+                String fromDisplay = (fromUser != null) ? fromUser.getName() + " (" + t.getFromUserId() + ")" : t.getFromUserId();
+                String toDisplay = (toUser != null) ? toUser.getName() + " (" + t.getToUserId() + ")" : t.getToUserId();
                 tableModel.addRow(new Object[]{
                         t.getTransactionId(),
-                        t.getFromUserId(),
-                        t.getToUserId(),
+                        fromDisplay,
+                        toDisplay,
                         t.getHoursSpent(),
                         t.getCreditAmount(),
-                        t.getType(),
-                        t.getType() + " exchange"
+                        t.getType()
                 });
             }
         }

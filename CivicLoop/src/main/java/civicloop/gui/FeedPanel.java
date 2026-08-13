@@ -1,6 +1,7 @@
 package civicloop.gui;
 
 import civicloop.model.CommunityPost;
+import civicloop.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -12,8 +13,7 @@ public class FeedPanel extends JPanel {
     private JList<CommunityPost> postList;
     private JTextArea postInput;
     private JTextArea commentInput;
-    private JButton commentBtn;
-    private JButton refreshBtn;
+    private JTextField searchField;
 
     public FeedPanel(MainFrame parent) {
         this.parent = parent;
@@ -33,7 +33,7 @@ public class FeedPanel extends JPanel {
         bottom.setBackground(UITheme.PANEL_BG);
         bottom.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-        // New post panel
+        // New post
         JPanel postPanel = new JPanel(new BorderLayout());
         postPanel.setBackground(UITheme.PANEL_BG);
         postPanel.setBorder(BorderFactory.createTitledBorder("New Post"));
@@ -42,44 +42,50 @@ public class FeedPanel extends JPanel {
         postInput.setWrapStyleWord(true);
         postInput.setFont(UITheme.LABEL_FONT);
         postPanel.add(new JScrollPane(postInput), BorderLayout.CENTER);
-
-        JPanel postBtnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton postBtn = new JButton("Post");
         UITheme.styleButton(postBtn);
-        postBtnPanel.add(postBtn);
-        postPanel.add(postBtnPanel, BorderLayout.EAST);
+        postPanel.add(postBtn, BorderLayout.EAST);
         postBtn.addActionListener(e -> addPost());
 
-        // Comment panel
+        // Comment
         JPanel commentPanel = new JPanel(new BorderLayout());
         commentPanel.setBackground(UITheme.PANEL_BG);
-        commentPanel.setBorder(BorderFactory.createTitledBorder("Add Comment to Selected Post"));
+        commentPanel.setBorder(BorderFactory.createTitledBorder("Add Comment"));
         commentInput = new JTextArea(2, 30);
         commentInput.setLineWrap(true);
         commentInput.setWrapStyleWord(true);
         commentInput.setFont(UITheme.LABEL_FONT);
         commentPanel.add(new JScrollPane(commentInput), BorderLayout.CENTER);
-
-        JPanel commentBtnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        commentBtn = new JButton("Add Comment");
+        JButton commentBtn = new JButton("Add Comment");
         UITheme.styleButton(commentBtn);
         commentBtn.setBackground(UITheme.ACCENT);
-        commentBtnPanel.add(commentBtn);
-        commentPanel.add(commentBtnPanel, BorderLayout.EAST);
+        commentPanel.add(commentBtn, BorderLayout.EAST);
         commentBtn.addActionListener(e -> addComment());
 
-        // Refresh button at bottom
-        JPanel refreshPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        refreshBtn = new JButton("Refresh Feed");
-        UITheme.styleButton(refreshBtn);
-        refreshBtn.setBackground(UITheme.SECONDARY);
-        refreshPanel.add(refreshBtn);
-        refreshBtn.addActionListener(e -> refresh());
+        // Search
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        searchPanel.setOpaque(false);
+        searchPanel.add(new JLabel("Search by Author:"));
+        searchField = new JTextField(12);
+        searchField.setFont(UITheme.LABEL_FONT);
+        searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
+        UITheme.styleButton(searchBtn);
+        searchBtn.setBackground(UITheme.SECONDARY);
+        searchPanel.add(searchBtn);
+        JButton clearBtn = new JButton("Clear");
+        UITheme.styleButton(clearBtn);
+        clearBtn.setBackground(UITheme.WARNING);
+        searchPanel.add(clearBtn);
 
         bottom.add(postPanel, BorderLayout.NORTH);
         bottom.add(commentPanel, BorderLayout.CENTER);
-        bottom.add(refreshPanel, BorderLayout.SOUTH);
+        bottom.add(searchPanel, BorderLayout.SOUTH);
         add(bottom, BorderLayout.SOUTH);
+
+        searchBtn.addActionListener(e -> refresh());
+        clearBtn.addActionListener(e -> { searchField.setText(""); refresh(); });
+        searchField.addActionListener(e -> refresh());
 
         refresh();
     }
@@ -123,62 +129,119 @@ public class FeedPanel extends JPanel {
     }
 
     public void refresh() {
+        String query = searchField.getText().trim().toLowerCase();
         postListModel.clear();
-        ArrayList<CommunityPost> posts = parent.getDataStore().getPosts();
-        for (int i = posts.size() - 1; i >= 0; i--) {
-            postListModel.addElement(posts.get(i));
+        ArrayList<CommunityPost> allPosts = parent.getDataStore().getPosts();
+        // newest first
+        for (int i = allPosts.size() - 1; i >= 0; i--) {
+            CommunityPost p = allPosts.get(i);
+            if (!query.isEmpty()) {
+                User author = parent.getDataStore().findUser(p.getAuthorId());
+                String authorName = (author != null) ? author.getName().toLowerCase() : "";
+                String authorId = p.getAuthorId().toLowerCase();
+                // Search both name and ID
+                if (!authorName.contains(query) && !authorId.contains(query)) {
+                    continue;
+                }
+            }
+            postListModel.addElement(p);
         }
     }
 
-    // Custom card renderer (unchanged, but included for completeness)
+    // Custom renderer: shows author name + ID, content, comments, likes
     private class PostCardRenderer extends JPanel implements ListCellRenderer<CommunityPost> {
-        private JLabel authorLabel, contentLabel, metaLabel, likeLabel, commentCountLabel;
+        private JLabel authorLabel, metaLabel, likeLabel, commentCountLabel;
+        private JTextArea contentArea, commentArea;
+        private JPanel commentPanel;
 
         public PostCardRenderer() {
             setLayout(new BorderLayout(6, 4));
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(UITheme.SECONDARY, 1),
-                    BorderFactory.createEmptyBorder(6, 8, 6, 8)
+                    BorderFactory.createEmptyBorder(8, 10, 8, 10)
             ));
             setBackground(Color.WHITE);
 
+            // Header: author (name + ID) and timestamp
             JPanel top = new JPanel(new BorderLayout());
             top.setOpaque(false);
             authorLabel = new JLabel();
             authorLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
             authorLabel.setForeground(UITheme.PRIMARY);
             top.add(authorLabel, BorderLayout.WEST);
-
             metaLabel = new JLabel();
             metaLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
             metaLabel.setForeground(Color.GRAY);
             top.add(metaLabel, BorderLayout.EAST);
             add(top, BorderLayout.NORTH);
 
-            contentLabel = new JLabel();
-            contentLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
-            contentLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
-            add(contentLabel, BorderLayout.CENTER);
+            // Content
+            contentArea = new JTextArea();
+            contentArea.setEditable(false);
+            contentArea.setLineWrap(true);
+            contentArea.setWrapStyleWord(true);
+            contentArea.setFont(new Font("SansSerif", Font.PLAIN, 13));
+            contentArea.setBackground(null);
+            contentArea.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
+            add(contentArea, BorderLayout.CENTER);
 
-            JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
-            bottom.setOpaque(false);
+            // Comments section
+            commentPanel = new JPanel(new BorderLayout());
+            commentPanel.setOpaque(false);
+            commentArea = new JTextArea();
+            commentArea.setEditable(false);
+            commentArea.setLineWrap(true);
+            commentArea.setWrapStyleWord(true);
+            commentArea.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            commentArea.setForeground(Color.DARK_GRAY);
+            commentArea.setBackground(new Color(240, 244, 248));
+            commentArea.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
+            JScrollPane commentScroll = new JScrollPane(commentArea);
+            commentScroll.setPreferredSize(new Dimension(0, 60));
+            commentPanel.add(commentScroll, BorderLayout.CENTER);
+
+            // Stats (likes and comment count) below comments
+            JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+            statsPanel.setOpaque(false);
             likeLabel = new JLabel("♥ 0");
             likeLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-            bottom.add(likeLabel);
+            statsPanel.add(likeLabel);
             commentCountLabel = new JLabel("💬 0");
             commentCountLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-            bottom.add(commentCountLabel);
-            add(bottom, BorderLayout.SOUTH);
+            statsPanel.add(commentCountLabel);
+
+            JPanel bottomWrapper = new JPanel(new BorderLayout());
+            bottomWrapper.setOpaque(false);
+            bottomWrapper.add(commentPanel, BorderLayout.CENTER);
+            bottomWrapper.add(statsPanel, BorderLayout.SOUTH);
+            add(bottomWrapper, BorderLayout.SOUTH);
         }
 
         @Override
         public Component getListCellRendererComponent(JList<? extends CommunityPost> list,
                 CommunityPost post, int index, boolean isSelected, boolean cellHasFocus) {
-            authorLabel.setText("👤 " + post.getAuthorId());
+            // Get author name
+            User author = parent.getDataStore().findUser(post.getAuthorId());
+            String authorDisplay = (author != null) ?
+                    author.getName() + " (" + post.getAuthorId() + ")" :
+                    post.getAuthorId();
+
+            authorLabel.setText("👤 " + authorDisplay);
             metaLabel.setText(post.getTimestamp());
-            contentLabel.setText(post.getContent());
+            contentArea.setText(post.getContent());
             likeLabel.setText("♥ " + post.getLikes());
             commentCountLabel.setText("💬 " + post.getComments().size());
+
+            // Show comments
+            StringBuilder sb = new StringBuilder();
+            if (post.getComments().isEmpty()) {
+                sb.append("(No comments)");
+            } else {
+                for (String c : post.getComments()) {
+                    sb.append("• ").append(c).append("\n");
+                }
+            }
+            commentArea.setText(sb.toString());
 
             if (isSelected) {
                 setBackground(UITheme.SECONDARY.brighter());
@@ -187,7 +250,7 @@ public class FeedPanel extends JPanel {
                 setBackground(Color.WHITE);
                 setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(UITheme.SECONDARY, 1),
-                        BorderFactory.createEmptyBorder(6, 8, 6, 8)
+                        BorderFactory.createEmptyBorder(8, 10, 8, 10)
                 ));
             }
             return this;
