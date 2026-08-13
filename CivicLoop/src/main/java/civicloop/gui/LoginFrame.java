@@ -3,107 +3,117 @@ package civicloop.gui;
 import civicloop.data.DataStore;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.IOException;
 
-/**
- * Login and registration window.
- * Uses DataStore for persistence – loads saved data on startup and saves on exit.
- */
-
 public class LoginFrame extends JFrame {
-    private JTextField userIdField, nameField, areaField, regUserIdField;
+    private JTextField userIdField, nameField, areaField;
     private JPasswordField passwordField, regPasswordField;
     private DataStore dataStore;
 
     public LoginFrame() {
         setTitle("CivicLoop - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(450, 350);
+        setSize(500, 400);
         setLocationRelativeTo(null);
+        setResizable(false);
 
-        // Load existing data (if any)
         try {
             dataStore = DataStore.loadFromFile("civicloop_data.dat");
         } catch (IOException | ClassNotFoundException e) {
-            dataStore = new DataStore();  // start fresh if file missing/corrupt
+            dataStore = new DataStore();
+            JOptionPane.showMessageDialog(this,
+                "No saved data found. Starting fresh.", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        // Use a tabbed pane to separate Login and Registration
         JTabbedPane tabs = new JTabbedPane();
-        tabs.add("Login", createLoginPanel());
-        tabs.add("Register", createRegisterPanel());
+        tabs.addTab("Login", createLoginPanel());
+        tabs.addTab("Register", createRegisterPanel());
         add(tabs);
     }
-    
-   
+
     private JPanel createLoginPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
+        UITheme.stylePanel(panel);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,5,5,5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        
+
+        // User ID
         JLabel lblId = new JLabel("User ID:");
-        gbc.gridx=0; gbc.gridy=0; panel.add(lblId, gbc);
-        userIdField = new JTextField(10);
-        gbc.gridx=1; panel.add(userIdField, gbc);
+        lblId.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 0; gbc.gridy = 0; panel.add(lblId, gbc);
+        userIdField = new JTextField(12);
+        userIdField.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 1; panel.add(userIdField, gbc);
 
+        // Password
         JLabel lblPass = new JLabel("Password:");
-        gbc.gridx=0; gbc.gridy=1; panel.add(lblPass, gbc);
-        passwordField = new JPasswordField(10);
-        gbc.gridx=1; panel.add(passwordField, gbc);
+        lblPass.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 0; gbc.gridy = 1; panel.add(lblPass, gbc);
+        passwordField = new JPasswordField(12);
+        passwordField.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 1; panel.add(passwordField, gbc);
 
+        // Login button
         JButton loginBtn = new JButton("Log In");
-        gbc.gridx=0; gbc.gridy=2; gbc.gridwidth=2;
+        UITheme.styleButton(loginBtn);
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         panel.add(loginBtn, gbc);
 
-        
-        // Login action: validate, then open MainFrame
-        loginBtn.addActionListener((ActionEvent e) -> {
+        loginBtn.addActionListener(e -> {
             String uid = userIdField.getText().trim();
             String pass = new String(passwordField.getPassword());
             if (uid.isEmpty() || pass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please fill all fields.");
+                JOptionPane.showMessageDialog(this, "Please fill both fields.");
                 return;
             }
-            var user = dataStore.login(uid, pass);
+            User user = dataStore.login(uid, pass);
             if (user == null) {
                 JOptionPane.showMessageDialog(this, "Invalid User ID or password.");
             } else {
-                dispose();  // close login window
+                dispose();
                 new MainFrame(dataStore, user).setVisible(true);
             }
         });
 
         return panel;
     }
-    
+
     private JPanel createRegisterPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
+        UITheme.stylePanel(panel);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,5,5,5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel lblName = new JLabel("Full Name:");
-        gbc.gridx=0; gbc.gridy=0; panel.add(lblName, gbc);
-        nameField = new JTextField(10);
-        gbc.gridx=1; panel.add(nameField, gbc);
+        lblName.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 0; gbc.gridy = 0; panel.add(lblName, gbc);
+        nameField = new JTextField(12);
+        nameField.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 1; panel.add(nameField, gbc);
 
         JLabel lblArea = new JLabel("Area:");
-        gbc.gridx=0; gbc.gridy=1; panel.add(lblArea, gbc);
-        areaField = new JTextField(10);
-        gbc.gridx=1; panel.add(areaField, gbc);
-JLabel lblPass = new JLabel("Password:");
-        gbc.gridx=0; gbc.gridy=2; panel.add(lblPass, gbc);
-        regPasswordField = new JPasswordField(10);
-        gbc.gridx=1; panel.add(regPasswordField, gbc);
+        lblArea.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 0; gbc.gridy = 1; panel.add(lblArea, gbc);
+        areaField = new JTextField(12);
+        areaField.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 1; panel.add(areaField, gbc);
+
+        JLabel lblPass = new JLabel("Password:");
+        lblPass.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 0; gbc.gridy = 2; panel.add(lblPass, gbc);
+        regPasswordField = new JPasswordField(12);
+        regPasswordField.setFont(UITheme.LABEL_FONT);
+        gbc.gridx = 1; panel.add(regPasswordField, gbc);
 
         JButton regBtn = new JButton("Register");
-        gbc.gridx=0; gbc.gridy=3; gbc.gridwidth=2;
+        UITheme.styleButton(regBtn);
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         panel.add(regBtn, gbc);
 
-        regBtn.addActionListener((ActionEvent e) -> {
+        regBtn.addActionListener(e -> {
             String name = nameField.getText().trim();
             String area = areaField.getText().trim();
             String pass = new String(regPasswordField.getPassword());
@@ -112,19 +122,20 @@ JLabel lblPass = new JLabel("Password:");
                 return;
             }
             String newId = dataStore.registerUser(name, area, pass);
-            JOptionPane.showMessageDialog(this,
-                    "Registration successful! Your User ID is: " + newId);
-            // Clear fields
-            nameField.setText("");
-            areaField.setText("");
-            
-            regPasswordField.setText("");
+            if (newId == null) {
+                JOptionPane.showMessageDialog(this, "Registration failed: No available User ID (1000-5000).");
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Registration successful!\nYour User ID is: " + newId);
+                // Clear fields
+                nameField.setText("");
+                areaField.setText("");
+                regPasswordField.setText("");
+            }
         });
 
         return panel;
     }
-    
-    // Save data when the whole application window closes
 
     @Override
     public void dispose() {
