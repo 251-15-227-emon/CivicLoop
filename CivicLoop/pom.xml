@@ -7,8 +7,7 @@
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>24</maven.compiler.release>
-        <exec.mainClass>com.mycompany.civicloop.CivicLoop</exec.mainClass>
-    </properties>
+        <maven.compiler.release>21</maven.compiler.release>
+<exec.mainClass>civicloop.Main</exec.mainClass>    </properties>
     <name>CivicLoop-Project-FIle</name>
 </project>
