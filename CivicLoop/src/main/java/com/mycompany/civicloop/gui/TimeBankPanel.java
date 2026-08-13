@@ -5,10 +5,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-/**
- * Shows the current user's transaction history and TimeCredit balance.
- */
-
 public class TimeBankPanel extends JPanel {
     private MainFrame parent;
     private JLabel balanceLabel;
@@ -19,12 +15,10 @@ public class TimeBankPanel extends JPanel {
         this.parent = parent;
         setLayout(new BorderLayout());
 
-        // Balance display at the top
         balanceLabel = new JLabel();
         balanceLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         add(balanceLabel, BorderLayout.NORTH);
 
-        // Transaction table
         tableModel = new DefaultTableModel(
                 new String[]{"ID","From","To","Hours","Credits","Type"}, 0);
         txTable = new JTable(tableModel);
@@ -33,8 +27,6 @@ public class TimeBankPanel extends JPanel {
         refresh();
     }
 
-    
-
     public void refresh() {
         String uid = parent.getCurrentUser().getUserId();
         balanceLabel.setText("Your TimeCredit Balance: " +
@@ -42,7 +34,6 @@ public class TimeBankPanel extends JPanel {
 
         tableModel.setRowCount(0);
         for (TimeCreditTransaction t : parent.getDataStore().getTransactions()) {
-            // Show only transactions involving this user
             if (t.getFromUserId().equals(uid) || t.getToUserId().equals(uid)) {
                 tableModel.addRow(new Object[]{
                         t.getTransactionId(),
