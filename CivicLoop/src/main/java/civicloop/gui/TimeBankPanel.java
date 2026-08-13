@@ -60,8 +60,6 @@ public class TimeBankPanel extends JPanel {
         tableModel.setRowCount(0);
         for (TimeCreditTransaction t : parent.getDataStore().getTransactions()) {
             if (t.getFromUserId().equals(uid) || t.getToUserId().equals(uid)) {
-                // Build a detail string
-                String detail = t.getType() + " exchange";
                 tableModel.addRow(new Object[]{
                         t.getTransactionId(),
                         t.getFromUserId(),
@@ -69,7 +67,7 @@ public class TimeBankPanel extends JPanel {
                         t.getHoursSpent(),
                         t.getCreditAmount(),
                         t.getType(),
-                        detail
+                        t.getType() + " exchange"
                 });
             }
         }

@@ -3,7 +3,6 @@ package civicloop.gui;
 import civicloop.model.User;
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class TrustPanel extends JPanel {
     private MainFrame parent;
@@ -21,7 +20,6 @@ public class TrustPanel extends JPanel {
         gbc.insets = new Insets(6, 6, 6, 6);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Profile area
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         profileArea = new JTextArea(6, 30);
         profileArea.setEditable(false);
@@ -30,7 +28,6 @@ public class TrustPanel extends JPanel {
         profileArea.setBorder(UITheme.COMPOUND_BORDER);
         add(new JScrollPane(profileArea), gbc);
 
-        // Trust score
         gbc.gridy = 1; gbc.gridwidth = 1;
         JLabel lblScore = new JLabel("Trust Score:");
         lblScore.setFont(UITheme.LABEL_FONT);
@@ -52,7 +49,6 @@ public class TrustPanel extends JPanel {
         statusLabel.setFont(UITheme.LABEL_FONT);
         add(statusLabel, gbc);
 
-        // Skill management
         gbc.gridy = 4; gbc.gridwidth = 1;
         JLabel skillLabel = new JLabel("Add Skill:");
         skillLabel.setFont(UITheme.LABEL_FONT);
@@ -70,7 +66,6 @@ public class TrustPanel extends JPanel {
 
         addSkillBtn.addActionListener(e -> addSkill());
 
-        // Report buttons
         JPanel reportPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 4));
         reportPanel.setBackground(UITheme.PANEL_BG);
         JButton lateBtn = new JButton("Report Late Return");

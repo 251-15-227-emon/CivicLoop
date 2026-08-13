@@ -26,7 +26,6 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Header
         JPanel header = new JPanel(new BorderLayout());
         UITheme.stylePanel(header);
         header.setBackground(UITheme.PRIMARY);
@@ -46,13 +45,14 @@ public class MainFrame extends JFrame {
                     "Are you sure you want to logout?", "Logout",
                     JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
+                // Save data before logout
+                saveData();
                 dispose();
                 new LoginFrame().setVisible(true);
             }
         });
         add(header, BorderLayout.NORTH);
 
-        // Tabbed pane
         JTabbedPane tabs = new JTabbedPane();
         itemPanel = new ItemPanel(this);
         servicePanel = new ServicePanel(this);
@@ -72,14 +72,18 @@ public class MainFrame extends JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
-                try {
-                    dataStore.saveToFile("civicloop_data.dat");
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(MainFrame.this,
-                            "Could not save data: " + ex.getMessage());
-                }
+                saveData();
             }
         });
+    }
+
+    private void saveData() {
+        try {
+            dataStore.saveToFile("civicloop_data.dat");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Could not save data: " + ex.getMessage());
+        }
     }
 
     public void refreshAll() {

@@ -3,6 +3,7 @@ package civicloop.gui;
 import civicloop.model.CommunityPost;
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FeedPanel extends JPanel {
@@ -12,13 +13,13 @@ public class FeedPanel extends JPanel {
     private JTextArea postInput;
     private JTextArea commentInput;
     private JButton commentBtn;
+    private JButton refreshBtn;
 
     public FeedPanel(MainFrame parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
         UITheme.stylePanel(this);
 
-        // Post list with custom renderer
         postListModel = new DefaultListModel<>();
         postList = new JList<>(postListModel);
         postList.setCellRenderer(new PostCardRenderer());
@@ -28,12 +29,11 @@ public class FeedPanel extends JPanel {
         scroll.setBorder(UITheme.COMPOUND_BORDER);
         add(scroll, BorderLayout.CENTER);
 
-        // Bottom panel: new post + comment
         JPanel bottom = new JPanel(new BorderLayout(6, 6));
         bottom.setBackground(UITheme.PANEL_BG);
         bottom.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-        // Post input area
+        // New post panel
         JPanel postPanel = new JPanel(new BorderLayout());
         postPanel.setBackground(UITheme.PANEL_BG);
         postPanel.setBorder(BorderFactory.createTitledBorder("New Post"));
@@ -43,12 +43,14 @@ public class FeedPanel extends JPanel {
         postInput.setFont(UITheme.LABEL_FONT);
         postPanel.add(new JScrollPane(postInput), BorderLayout.CENTER);
 
+        JPanel postBtnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton postBtn = new JButton("Post");
         UITheme.styleButton(postBtn);
-        postPanel.add(postBtn, BorderLayout.EAST);
+        postBtnPanel.add(postBtn);
+        postPanel.add(postBtnPanel, BorderLayout.EAST);
         postBtn.addActionListener(e -> addPost());
 
-        // Comment input area
+        // Comment panel
         JPanel commentPanel = new JPanel(new BorderLayout());
         commentPanel.setBackground(UITheme.PANEL_BG);
         commentPanel.setBorder(BorderFactory.createTitledBorder("Add Comment to Selected Post"));
@@ -58,14 +60,25 @@ public class FeedPanel extends JPanel {
         commentInput.setFont(UITheme.LABEL_FONT);
         commentPanel.add(new JScrollPane(commentInput), BorderLayout.CENTER);
 
+        JPanel commentBtnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         commentBtn = new JButton("Add Comment");
         UITheme.styleButton(commentBtn);
         commentBtn.setBackground(UITheme.ACCENT);
-        commentPanel.add(commentBtn, BorderLayout.EAST);
+        commentBtnPanel.add(commentBtn);
+        commentPanel.add(commentBtnPanel, BorderLayout.EAST);
         commentBtn.addActionListener(e -> addComment());
 
+        // Refresh button at bottom
+        JPanel refreshPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        refreshBtn = new JButton("Refresh Feed");
+        UITheme.styleButton(refreshBtn);
+        refreshBtn.setBackground(UITheme.SECONDARY);
+        refreshPanel.add(refreshBtn);
+        refreshBtn.addActionListener(e -> refresh());
+
         bottom.add(postPanel, BorderLayout.NORTH);
-        bottom.add(commentPanel, BorderLayout.SOUTH);
+        bottom.add(commentPanel, BorderLayout.CENTER);
+        bottom.add(refreshPanel, BorderLayout.SOUTH);
         add(bottom, BorderLayout.SOUTH);
 
         refresh();
@@ -78,6 +91,7 @@ public class FeedPanel extends JPanel {
             return;
         }
         parent.getDataStore().addPost(parent.getCurrentUser().getUserId(), content);
+        saveData();
         postInput.setText("");
         parent.refreshAll();
     }
@@ -95,23 +109,30 @@ public class FeedPanel extends JPanel {
         }
         parent.getDataStore().addCommentToPost(selected.getPostId(),
                 parent.getCurrentUser().getUserId(), comment);
+        saveData();
         commentInput.setText("");
         parent.refreshAll();
+    }
+
+    private void saveData() {
+        try {
+            parent.getDataStore().saveToFile("civicloop_data.dat");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Could not save data: " + ex.getMessage());
+        }
     }
 
     public void refresh() {
         postListModel.clear();
         ArrayList<CommunityPost> posts = parent.getDataStore().getPosts();
-        // newest first
         for (int i = posts.size() - 1; i >= 0; i--) {
             postListModel.addElement(posts.get(i));
         }
     }
 
-    // Custom renderer to display posts as cards
+    // Custom card renderer (unchanged, but included for completeness)
     private class PostCardRenderer extends JPanel implements ListCellRenderer<CommunityPost> {
         private JLabel authorLabel, contentLabel, metaLabel, likeLabel, commentCountLabel;
-        private JButton likeBtn, commentBtnInline;
 
         public PostCardRenderer() {
             setLayout(new BorderLayout(6, 4));

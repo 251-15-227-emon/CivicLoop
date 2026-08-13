@@ -1,6 +1,7 @@
 package civicloop.gui;
 
 import civicloop.data.DataStore;
+import civicloop.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -38,7 +39,6 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // User ID
         JLabel lblId = new JLabel("User ID:");
         lblId.setFont(UITheme.LABEL_FONT);
         gbc.gridx = 0; gbc.gridy = 0; panel.add(lblId, gbc);
@@ -46,7 +46,6 @@ public class LoginFrame extends JFrame {
         userIdField.setFont(UITheme.LABEL_FONT);
         gbc.gridx = 1; panel.add(userIdField, gbc);
 
-        // Password
         JLabel lblPass = new JLabel("Password:");
         lblPass.setFont(UITheme.LABEL_FONT);
         gbc.gridx = 0; gbc.gridy = 1; panel.add(lblPass, gbc);
@@ -54,7 +53,6 @@ public class LoginFrame extends JFrame {
         passwordField.setFont(UITheme.LABEL_FONT);
         gbc.gridx = 1; panel.add(passwordField, gbc);
 
-        // Login button
         JButton loginBtn = new JButton("Log In");
         UITheme.styleButton(loginBtn);
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
@@ -127,7 +125,6 @@ public class LoginFrame extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this,
                         "Registration successful!\nYour User ID is: " + newId);
-                // Clear fields
                 nameField.setText("");
                 areaField.setText("");
                 regPasswordField.setText("");

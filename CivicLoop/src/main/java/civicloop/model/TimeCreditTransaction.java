@@ -5,17 +5,14 @@ import java.util.UUID;
 
 public class TimeCreditTransaction implements Serializable {
     private String transactionId;
-    private String fromUserId;   // the spender
-    private String toUserId;     // the earner
+    private String fromUserId;
+    private String toUserId;
     private double hoursSpent;
     private double creditAmount;
-    private String type;         // "Item" or "Service"
-    
+    private String type;
 
-
-
-     public TimeCreditTransaction(String fromUserId, String toUserId,
-        double hoursSpent, Creditable offer) {
+    public TimeCreditTransaction(String fromUserId, String toUserId,
+                                 double hoursSpent, Creditable offer) {
         this.transactionId = UUID.randomUUID().toString().substring(0, 8);
         this.fromUserId = fromUserId;
         this.toUserId = toUserId;
@@ -24,16 +21,10 @@ public class TimeCreditTransaction implements Serializable {
         this.type = offer.getOfferType();
     }
 
-    /**
-     * Polymorphic call: the same method behaves differently depending on
-     * whether 'offer' is an Item (rate 0.5) or a Service (rate 1.0).
-     */
     private double calculateCredit(double hours, Creditable offer) {
         return hours * offer.getCreditRate();
     }
 
-
-    // Getters
     public String getTransactionId() { return transactionId; }
     public String getFromUserId() { return fromUserId; }
     public String getToUserId() { return toUserId; }
@@ -46,25 +37,4 @@ public class TimeCreditTransaction implements Serializable {
         return String.format("%s -> %s : %.1f hrs (%s) = %.1f TC",
                 fromUserId, toUserId, hoursSpent, type, creditAmount);
     }
-
-
-
-
 }
-
-// DONE 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
