@@ -1,0 +1,16 @@
+civicloop\gui\FeedPanel.class
+civicloop\model\TimeCreditTransaction.class
+civicloop\model\Creditable.class
+civicloop\gui\MainFrame.class
+civicloop\model\TrustScoreManager.class
+civicloop\model\CommunityPost.class
+civicloop\gui\TimeBankPanel.class
+civicloop\model\Item.class
+civicloop\data\DataStore.class
+civicloop\gui\LoginFrame.class
+civicloop\gui\TrustPanel.class
+civicloop\gui\ServicePanel.class
+civicloop\model\Service.class
+civicloop\gui\MainFrame$1.class
+civicloop\gui\ItemPanel.class
+civicloop\model\User.class
