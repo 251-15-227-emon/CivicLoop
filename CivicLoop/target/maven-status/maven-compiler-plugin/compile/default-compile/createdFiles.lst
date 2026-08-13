@@ -13,4 +13,5 @@ civicloop\gui\ServicePanel.class
 civicloop\model\Service.class
 civicloop\gui\MainFrame$1.class
 civicloop\gui\ItemPanel.class
+civicloop\gui\UITheme.class
 civicloop\model\User.class
