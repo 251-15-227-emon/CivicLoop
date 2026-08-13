@@ -2,6 +2,10 @@ package civicloop.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+<<<<<<< HEAD
+
+public class User implements Serializable {
+=======
 import java.util.UUID;
 
  /**
@@ -11,21 +15,22 @@ import java.util.UUID;
 
     public class User implements Serializable {
 
+>>>>>>> main
     private String userId;
     private String name;
     private String area;
-    private ArrayList<String> skills;    // list of skills (e.g., "Cooking", "Java")
-    private String password;             // stored plainly for this beginner project
-    private int trustScore;              // initialised by TrustScoreManager
-    private double timeCreditBalance;    // how many TimeCredits the user has
-     
-    public User(String name, String area, String password) {
-        this.userId = UUID.randomUUID().toString().substring(0, 8);
+    private ArrayList<String> skills;
+    private String password;
+    private int trustScore;
+    private double timeCreditBalance;
+
+    public User(String name, String area, String password, String userId) {
+        this.userId = userId;
         this.name = name;
         this.area = area;
         this.password = password;
         this.skills = new ArrayList<>();
-        this.trustScore = 50;            // starting trust score (see TrustScoreManager)
+        this.trustScore = 50;
         this.timeCreditBalance = 0.0;
     }
 
@@ -33,6 +38,11 @@ import java.util.UUID;
         return this.password.equals(attempt);
     }
 
+<<<<<<< HEAD
+    public String getUserId() { return userId; }
+    public String getName() { return name; }
+    public String getArea() { return area; }
+=======
 
 
     // ---------- Public getters / controlled setters ----------
@@ -47,6 +57,7 @@ import java.util.UUID;
     public String getArea() {
          return area; 
         }
+>>>>>>> main
     public ArrayList<String> getSkills() { return skills; }
     public int getTrustScore() { return trustScore; }
     public void setTrustScore(int trustScore) { this.trustScore = Math.max(0, trustScore); }
@@ -54,7 +65,4 @@ import java.util.UUID;
     public void setTimeCreditBalance(double balance) { this.timeCreditBalance = balance; }
 
     public void addSkill(String skill) { skills.add(skill); }
-
 }
-
-

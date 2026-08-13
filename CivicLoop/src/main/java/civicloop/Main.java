@@ -1,4 +1,4 @@
-package com.mycompany.civicloop;
+package civicloop;
 
 import civicloop.gui.LoginFrame;
 import javax.swing.SwingUtilities;

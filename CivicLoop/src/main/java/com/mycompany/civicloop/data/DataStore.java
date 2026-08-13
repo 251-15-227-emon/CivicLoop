@@ -32,11 +32,25 @@ public class DataStore implements Serializable {
     }
 
     public String registerUser(String name, String area, String password) {
-        User u = new User(name, area, password);
-        users.put(u.getUserId(), u);
-        trustManagers.put(u.getUserId(), new TrustScoreManager(u.getUserId()));
-        return u.getUserId();
+    // 1000 থেকে 5000 এর মধ্যে একটি অব্যবহৃত ID খুঁজে বের করো
+    String newId = generateUserId();
+    User u = new User(name, area, password, newId);
+    users.put(u.getUserId(), u);
+    trustManagers.put(u.getUserId(), new TrustScoreManager(u.getUserId()));
+    return u.getUserId();
+}
+
+// নতুন মেথড: 1000-5000 রেঞ্জে একটি অব্যবহৃত ID তৈরি করে
+private String generateUserId() {
+    for (int id = 1000; id <= 5000; id++) {
+        String idStr = String.valueOf(id);
+        if (!users.containsKey(idStr)) {
+            return idStr;
+        }
     }
+    // সব ID ব্যবহার হয়ে গেলে (5000 জন ইউজার)
+    return null;
+}
 
     public User login(String userId, String password) {
         User u = users.get(userId);
