@@ -18,6 +18,9 @@ public class Service implements Creditable, Serializable {
 
     @Override
     public double getCreditRate() { return 1.0; }
+    
+    
+    
     @Override
     public String getOfferType() { return "Service"; }
 
