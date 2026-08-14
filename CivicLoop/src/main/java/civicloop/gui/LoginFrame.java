@@ -213,15 +213,28 @@ public class LoginFrame extends JFrame {
         return wrap;
     }
 
-    // ---- Small styled helpers ----
-    private JLabel fieldLabel(String text) {
-        JLabel l = new JLabel(text);
-        l.setFont(UITheme.SMALL_FONT);
-        l.setForeground(UITheme.TEXT_MUTED);
-        l.setAlignmentX(Component.LEFT_ALIGNMENT);
-        l.setBorder(BorderFactory.createEmptyBorder(0, 2, 4, 0));
-        return l;
-    }
+    private JComponent fieldLabel(String text) {
+    // text like "🆔 User ID" -> split emoji and label text
+    int spaceIdx = text.indexOf(' ');
+    String emoji = text.substring(0, spaceIdx);
+    String rest = text.substring(spaceIdx + 1);
+
+    JPanel wrap = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
+    wrap.setOpaque(false);
+    wrap.setAlignmentX(Component.LEFT_ALIGNMENT);
+    wrap.setBorder(BorderFactory.createEmptyBorder(0, 2, 4, 0));
+
+    JLabel iconL = new JLabel(emoji);
+    iconL.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
+
+    JLabel textL = new JLabel(rest);
+    textL.setFont(UITheme.SMALL_FONT);
+    textL.setForeground(UITheme.TEXT_MUTED);
+
+    wrap.add(iconL);
+    wrap.add(textL);
+    return wrap;
+}
 
     private JTextField styledTextField() {
         JTextField field = new JTextField();
