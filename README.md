@@ -630,11 +630,11 @@ The result is a small-scale demonstration of how software can model real-world s
 
 ## 📚 12. Project Resources & References
 
-### 💾 Project Files & Demonstration Materials
+### 💾 Project Report
 
-The complete project and related materials are available through the following Google Drive link:
+The complete project report is available through the following Google Drive link:
 
-🔗 **[CivicLoop — Project Files & Resources](https://drive.google.com/file/d/1DViZgyhvstrKOMr0Bu3RjK1AhCJuMNFy/view?usp=sharing)**
+🔗 **[CivicLoop — Project Report File](https://drive.google.com/file/d/1DViZgyhvstrKOMr0Bu3RjK1AhCJuMNFy/view?usp=sharing)**
 
 ### 🔗 GitHub Repository
 
