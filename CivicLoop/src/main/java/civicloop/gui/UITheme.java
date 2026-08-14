@@ -366,4 +366,43 @@ public class UITheme {
         UIManager.put("ToolTip.background", BACKGROUND);
         UIManager.put("ToolTip.foreground", PRIMARY_DARK);
     }
+    
+    
+    // ================== AUTO-DISMISS POPUP (no OK button needed) ==================
+    /**
+     * Shows a small, non-blocking, auto-closing notification near the given
+     * parent component — no button, no click required. Disappears on its
+     * own after ~1.2 seconds. Use this instead of JOptionPane for quick
+     * "done" style confirmations (e.g. after a refresh) so the user doesn't
+     * have to click OK every time.
+     */
+    public static void showAutoDismissPopup(Component parent, String message) {
+        Window owner = SwingUtilities.getWindowAncestor(parent);
+        JDialog dialog = new JDialog(owner);
+        dialog.setUndecorated(true);
+        dialog.setModal(false);
+        dialog.setAlwaysOnTop(true);
+
+        RoundedCardPanel card = new RoundedCardPanel();
+        card.setLayout(new BorderLayout());
+        card.setBorder(BorderFactory.createEmptyBorder(14, 22, 14, 22));
+
+        JLabel label = new JLabel(message);
+        label.setFont(LABEL_FONT);
+        label.setForeground(TEXT_MAIN);
+        card.add(label, BorderLayout.CENTER);
+
+        dialog.setContentPane(card);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
+        dialog.setVisible(true);
+
+        Timer timer = new Timer(1200, e -> dialog.dispose());
+        timer.setRepeats(false);
+        timer.start();
+    }
+    
+    
+    
+    
 }
