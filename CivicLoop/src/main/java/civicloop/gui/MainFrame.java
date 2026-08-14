@@ -189,6 +189,7 @@ public class MainFrame extends JFrame {
      * noticeable than a thin outlined pill. Shows an icon, a small caption
      * label, and a big bold value. Color-codes via setAccentColor().
      */
+    
     private static class StatChip extends JComponent {
         private final String icon;
         private final String caption;
