@@ -26,7 +26,7 @@ public class FeedPanel extends JPanel {
         postList.setCellRenderer(new PostCardRenderer());
         postList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         postList.setBackground(UITheme.BACKGROUND);
-        postList.setFixedCellHeight(-1); // variable height, computed per-cell
+        postList.setFixedCellHeight(-1); 
 
         JScrollPane scroll = new JScrollPane(postList);
         scroll.setBorder(BorderFactory.createEmptyBorder());
