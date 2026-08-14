@@ -293,6 +293,20 @@ public class UITheme {
         }
     }
 
+    // ================== EMOJI-SAFE TEXT ==================
+    /**
+     * Combines an emoji icon with label text so the emoji renders in a
+     * proper emoji-capable font ("Segoe UI Emoji") while the rest of the
+     * text keeps the normal theme font. Works for JLabel, JButton, and
+     * JTabbedPane tab titles since all of them support basic HTML rendering.
+     *
+     * Usage: UITheme.iconText("🔎", "Search by Owner:")
+     */
+    public static String iconText(String emoji, String text) {
+        return "<html><span style='font-family:Segoe UI Emoji;'>" + emoji
+                + "</span>&nbsp;" + text + "</html>";
+    }
+
     // ================== LEGACY HELPERS (kept for compatibility) ==================
 
     /**
