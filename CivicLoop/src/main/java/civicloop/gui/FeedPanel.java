@@ -26,7 +26,7 @@ public class FeedPanel extends JPanel {
         postList.setCellRenderer(new PostCardRenderer());
         postList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         postList.setBackground(UITheme.BACKGROUND);
-        postList.setFixedCellHeight(-1); // variable height, computed per-cell
+        postList.setFixedCellHeight(-1); 
 
         JScrollPane scroll = new JScrollPane(postList);
         scroll.setBorder(BorderFactory.createEmptyBorder());
@@ -194,7 +194,7 @@ public class FeedPanel extends JPanel {
     private class PostCardRenderer extends JPanel implements ListCellRenderer<CommunityPost> {
         private final JLabel avatarLabel, authorLabel, metaLabel;
         private final JTextArea contentArea;
-        private final JPanel statsRow;         // stable field — no fragile getParent() lookups
+        private final JPanel statsRow;         
         private final JPanel commentsWrapper;
 
         PostCardRenderer() {
