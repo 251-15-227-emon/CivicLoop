@@ -11,10 +11,14 @@ public class LoginFrame extends JFrame {
     private JPasswordField passwordField, regPasswordField;
     private DataStore dataStore;
 
+    private CardLayout cardLayout;
+    private JPanel cardHolder;
+    private UITheme.RoundedButton loginToggleBtn, registerToggleBtn;
+
     public LoginFrame() {
         setTitle("CivicLoop - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 400);
+        setSize(560, 620);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -26,38 +30,113 @@ public class LoginFrame extends JFrame {
                 "No saved data found. Starting fresh.", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("Login", createLoginPanel());
-        tabs.addTab("Register", createRegisterPanel());
-        add(tabs);
+        // ---- Full-window gradient background ----
+        UITheme.GradientPanel background = new UITheme.GradientPanel(UITheme.PRIMARY_DARK, UITheme.SECONDARY);
+        background.setLayout(new GridBagLayout());
+        setContentPane(background);
+
+        // ---- Outer wrapper: logo + card ----
+        JPanel wrapper = new JPanel();
+        wrapper.setOpaque(false);
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+
+        wrapper.add(buildLogo());
+        wrapper.add(Box.createVerticalStrut(22));
+        wrapper.add(buildCard());
+
+        background.add(wrapper);
     }
 
+    // ---- Logo / wordmark ----
+    private JComponent buildLogo() {
+        JPanel logoPanel = new JPanel();
+        logoPanel.setOpaque(false);
+        logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.Y_AXIS));
+
+        JLabel iconLabel = new JLabel("🔄", SwingConstants.CENTER);
+        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 42));
+        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel titleLabel = new JLabel("CivicLoop", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel subLabel = new JLabel("Share • Trust • Thrive Together", SwingConstants.CENTER);
+        subLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        subLabel.setForeground(new Color(255, 255, 255, 200));
+        subLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        logoPanel.add(iconLabel);
+        logoPanel.add(titleLabel);
+        logoPanel.add(Box.createVerticalStrut(4));
+        logoPanel.add(subLabel);
+        return logoPanel;
+    }
+
+    // ---- White rounded card containing the toggle + form ----
+    private JComponent buildCard() {
+        UITheme.RoundedCardPanel card = new UITheme.RoundedCardPanel();
+        card.setLayout(new BorderLayout());
+        card.setPreferredSize(new Dimension(400, 430));
+        card.setBorder(BorderFactory.createEmptyBorder(24, 26, 24, 26));
+
+        // Toggle buttons (Login / Register)
+        JPanel togglePanel = new JPanel(new GridLayout(1, 2, 8, 0));
+        togglePanel.setOpaque(false);
+        togglePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 18, 0));
+
+        loginToggleBtn = UITheme.createRoundedButton("Log In", UITheme.PRIMARY);
+        registerToggleBtn = UITheme.createRoundedButton("Register", UITheme.BORDER_COLOR);
+        registerToggleBtn.setForeground(UITheme.TEXT_MUTED);
+
+        togglePanel.add(loginToggleBtn);
+        togglePanel.add(registerToggleBtn);
+        card.add(togglePanel, BorderLayout.NORTH);
+
+        // Card layout for switching forms
+        cardLayout = new CardLayout();
+        cardHolder = new JPanel(cardLayout);
+        cardHolder.setOpaque(false);
+        cardHolder.add(createLoginPanel(), "LOGIN");
+        cardHolder.add(createRegisterPanel(), "REGISTER");
+        card.add(cardHolder, BorderLayout.CENTER);
+
+        loginToggleBtn.addActionListener(e -> switchTo("LOGIN"));
+        registerToggleBtn.addActionListener(e -> switchTo("REGISTER"));
+
+        return card;
+    }
+
+    private void switchTo(String name) {
+        cardLayout.show(cardHolder, name);
+        boolean isLogin = name.equals("LOGIN");
+        loginToggleBtn.setBaseColor(isLogin ? UITheme.PRIMARY : UITheme.BORDER_COLOR);
+        loginToggleBtn.setForeground(isLogin ? Color.WHITE : UITheme.TEXT_MUTED);
+        registerToggleBtn.setBaseColor(!isLogin ? UITheme.PRIMARY : UITheme.BORDER_COLOR);
+        registerToggleBtn.setForeground(!isLogin ? Color.WHITE : UITheme.TEXT_MUTED);
+    }
+
+    // ---- Login form ----
     private JPanel createLoginPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        UITheme.stylePanel(panel);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel lblId = new JLabel("User ID:");
-        lblId.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 0; panel.add(lblId, gbc);
-        userIdField = new JTextField(12);
-        userIdField.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 1; panel.add(userIdField, gbc);
+        panel.add(fieldLabel("User ID"));
+        userIdField = styledTextField();
+        panel.add(userIdField);
+        panel.add(Box.createVerticalStrut(14));
 
-        JLabel lblPass = new JLabel("Password:");
-        lblPass.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 1; panel.add(lblPass, gbc);
-        passwordField = new JPasswordField(12);
-        passwordField.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 1; panel.add(passwordField, gbc);
+        panel.add(fieldLabel("Password"));
+        passwordField = styledPasswordField();
+        panel.add(passwordField);
+        panel.add(Box.createVerticalStrut(26));
 
-        JButton loginBtn = new JButton("Log In");
-        UITheme.styleButton(loginBtn);
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(loginBtn, gbc);
+        UITheme.RoundedButton loginBtn = UITheme.createRoundedButton("Log In →", UITheme.ACCENT);
+        loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loginBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
+        panel.add(loginBtn);
 
         loginBtn.addActionListener(e -> {
             String uid = userIdField.getText().trim();
@@ -75,41 +154,37 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        return panel;
+        JPanel wrap = new JPanel(new BorderLayout());
+        wrap.setOpaque(false);
+        wrap.add(panel, BorderLayout.NORTH);
+        return wrap;
     }
 
+    // ---- Register form ----
     private JPanel createRegisterPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        UITheme.stylePanel(panel);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel lblName = new JLabel("Full Name:");
-        lblName.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 0; panel.add(lblName, gbc);
-        nameField = new JTextField(12);
-        nameField.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 1; panel.add(nameField, gbc);
+        panel.add(fieldLabel("Full Name"));
+        nameField = styledTextField();
+        panel.add(nameField);
+        panel.add(Box.createVerticalStrut(12));
 
-        JLabel lblArea = new JLabel("Area:");
-        lblArea.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 1; panel.add(lblArea, gbc);
-        areaField = new JTextField(12);
-        areaField.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 1; panel.add(areaField, gbc);
+        panel.add(fieldLabel("Area"));
+        areaField = styledTextField();
+        panel.add(areaField);
+        panel.add(Box.createVerticalStrut(12));
 
-        JLabel lblPass = new JLabel("Password:");
-        lblPass.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 2; panel.add(lblPass, gbc);
-        regPasswordField = new JPasswordField(12);
-        regPasswordField.setFont(UITheme.LABEL_FONT);
-        gbc.gridx = 1; panel.add(regPasswordField, gbc);
+        panel.add(fieldLabel("Password"));
+        regPasswordField = styledPasswordField();
+        panel.add(regPasswordField);
+        panel.add(Box.createVerticalStrut(22));
 
-        JButton regBtn = new JButton("Register");
-        UITheme.styleButton(regBtn);
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
-        panel.add(regBtn, gbc);
+        UITheme.RoundedButton regBtn = UITheme.createRoundedButton("Create Account", UITheme.SECONDARY);
+        regBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        regBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
+        panel.add(regBtn);
 
         regBtn.addActionListener(e -> {
             String name = nameField.getText().trim();
@@ -128,10 +203,42 @@ public class LoginFrame extends JFrame {
                 nameField.setText("");
                 areaField.setText("");
                 regPasswordField.setText("");
+                switchTo("LOGIN");
             }
         });
 
-        return panel;
+        JPanel wrap = new JPanel(new BorderLayout());
+        wrap.setOpaque(false);
+        wrap.add(panel, BorderLayout.NORTH);
+        return wrap;
+    }
+
+    // ---- Small styled helpers ----
+    private JLabel fieldLabel(String text) {
+        JLabel l = new JLabel(text);
+        l.setFont(UITheme.SMALL_FONT);
+        l.setForeground(UITheme.TEXT_MUTED);
+        l.setAlignmentX(Component.LEFT_ALIGNMENT);
+        l.setBorder(BorderFactory.createEmptyBorder(0, 2, 4, 0));
+        return l;
+    }
+
+    private JTextField styledTextField() {
+        JTextField field = new JTextField();
+        field.setFont(UITheme.LABEL_FONT);
+        field.setBorder(UITheme.TEXT_BORDER);
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        field.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return field;
+    }
+
+    private JPasswordField styledPasswordField() {
+        JPasswordField field = new JPasswordField();
+        field.setFont(UITheme.LABEL_FONT);
+        field.setBorder(UITheme.TEXT_BORDER);
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        field.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return field;
     }
 
     @Override

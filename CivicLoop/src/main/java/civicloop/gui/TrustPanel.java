@@ -3,101 +3,197 @@ package civicloop.gui;
 import civicloop.model.User;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TrustPanel extends JPanel {
     private MainFrame parent;
     private JProgressBar progressBar;
-    private JLabel scoreLabel, statusLabel;
-    private JTextArea profileArea;
+    private JLabel scoreLabel, statusBadgeLabel;
+    private JLabel avatarLabel, nameValue, areaValue, idValue, bioValue, skillsValue;
+    private JLabel givenValue, receivedValue;
     private JButton editProfileBtn;
     private JComboBox<String> targetUserCombo;
     private JButton reportLateBtn, reportFakeBtn;
 
     public TrustPanel(MainFrame parent) {
         this.parent = parent;
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout(0, 16));
         UITheme.stylePanel(this);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 6, 6, 6);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // ---- Profile display ----
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        profileArea = new JTextArea(8, 30);
-        profileArea.setEditable(false);
-        profileArea.setFont(UITheme.LABEL_FONT);
-        profileArea.setBackground(UITheme.PANEL_BG);
-        profileArea.setBorder(UITheme.COMPOUND_BORDER);
-        add(new JScrollPane(profileArea), gbc);
+        add(buildProfileCard(), BorderLayout.NORTH);
 
-        // ---- Edit profile button ----
-        gbc.gridy = 1; gbc.gridwidth = 2;
-        editProfileBtn = new JButton("✎ Edit Profile");
-        UITheme.styleButton(editProfileBtn);
-        editProfileBtn.setBackground(UITheme.SECONDARY);
-        add(editProfileBtn, gbc);
-        editProfileBtn.addActionListener(e -> editProfile());
-
-        // ---- Trust score ----
-        gbc.gridy = 2; gbc.gridwidth = 1;
-        JLabel lblScore = new JLabel("Trust Score:");
-        lblScore.setFont(UITheme.LABEL_FONT);
-        add(lblScore, gbc);
-        progressBar = new JProgressBar(0, 100);
-        progressBar.setStringPainted(true);
-        progressBar.setFont(UITheme.LABEL_FONT);
-        progressBar.setForeground(UITheme.ACCENT);
-        gbc.gridx = 1;
-        add(progressBar, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
-        scoreLabel = new JLabel();
-        scoreLabel.setFont(UITheme.LABEL_FONT);
-        add(scoreLabel, gbc);
-
-        gbc.gridy = 4;
-        statusLabel = new JLabel();
-        statusLabel.setFont(UITheme.LABEL_FONT);
-        add(statusLabel, gbc);
-
-        // ---- Report on other users ----
-        gbc.gridy = 5; gbc.gridwidth = 1;
-        JLabel reportLabel = new JLabel("Report user:");
-        reportLabel.setFont(UITheme.LABEL_FONT);
-        add(reportLabel, gbc);
-        gbc.gridx = 1;
-        targetUserCombo = new JComboBox<>();
-        targetUserCombo.setFont(UITheme.LABEL_FONT);
-        add(targetUserCombo, gbc);
-
-        JPanel reportBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 4));
-        reportBtnPanel.setBackground(UITheme.PANEL_BG);
-        reportLateBtn = new JButton("Report Late Return");
-        UITheme.styleButton(reportLateBtn);
-        reportLateBtn.setBackground(UITheme.WARNING);
-        reportBtnPanel.add(reportLateBtn);
-
-        reportFakeBtn = new JButton("Report Fake Request");
-        UITheme.styleButton(reportFakeBtn);
-        reportFakeBtn.setBackground(UITheme.DANGER);
-        reportBtnPanel.add(reportFakeBtn);
-
-        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
-        add(reportBtnPanel, gbc);
-
-        reportLateBtn.addActionListener(e -> reportUser(false));
-        reportFakeBtn.addActionListener(e -> reportUser(true));
+        JPanel middle = new JPanel();
+        middle.setOpaque(false);
+        middle.setLayout(new BoxLayout(middle, BoxLayout.Y_AXIS));
+        middle.add(buildTrustCard());
+        middle.add(Box.createVerticalStrut(16));
+        middle.add(buildReportCard());
+        add(middle, BorderLayout.CENTER);
 
         refresh();
     }
 
+    // ================= PROFILE CARD =================
+    private JComponent buildProfileCard() {
+        UITheme.RoundedCardPanel card = new UITheme.RoundedCardPanel();
+        card.setLayout(new BorderLayout(16, 0));
+        card.setBorder(BorderFactory.createEmptyBorder(18, 20, 18, 20));
+
+        avatarLabel = new JLabel();
+        avatarLabel.setPreferredSize(new Dimension(64, 64));
+        avatarLabel.setVerticalAlignment(SwingConstants.TOP);
+        card.add(avatarLabel, BorderLayout.WEST);
+
+        JPanel infoGrid = new JPanel(new GridBagLayout());
+        infoGrid.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(3, 0, 3, 12);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        nameValue = valueLabel("");
+        nameValue.setFont(UITheme.TITLE_FONT);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        infoGrid.add(nameValue, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.gridy = 1;
+        gbc.gridx = 0; infoGrid.add(captionLabel("🆔 ID"), gbc);
+        gbc.gridx = 1; idValue = valueLabel(""); infoGrid.add(idValue, gbc);
+
+        gbc.gridy = 2;
+        gbc.gridx = 0; infoGrid.add(captionLabel("📍 Area"), gbc);
+        gbc.gridx = 1; areaValue = valueLabel(""); infoGrid.add(areaValue, gbc);
+
+        gbc.gridy = 3;
+        gbc.gridx = 0; infoGrid.add(captionLabel("📝 Bio"), gbc);
+        gbc.gridx = 1; bioValue = valueLabel(""); infoGrid.add(bioValue, gbc);
+
+        gbc.gridy = 4;
+        gbc.gridx = 0; infoGrid.add(captionLabel("🛠 Skills"), gbc);
+        gbc.gridx = 1; skillsValue = valueLabel(""); infoGrid.add(skillsValue, gbc);
+
+        card.add(infoGrid, BorderLayout.CENTER);
+
+        editProfileBtn = UITheme.createRoundedButton("✎ Edit Profile", UITheme.SECONDARY);
+        JPanel btnWrap = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btnWrap.setOpaque(false);
+        btnWrap.add(editProfileBtn);
+        card.add(btnWrap, BorderLayout.EAST);
+        editProfileBtn.addActionListener(e -> editProfile());
+
+        return card;
+    }
+
+    private JLabel captionLabel(String text) {
+        JLabel l = new JLabel(text);
+        l.setFont(UITheme.SMALL_FONT);
+        l.setForeground(UITheme.TEXT_MUTED);
+        return l;
+    }
+
+    private JLabel valueLabel(String text) {
+        JLabel l = new JLabel(text);
+        l.setFont(UITheme.LABEL_FONT);
+        l.setForeground(UITheme.TEXT_MAIN);
+        return l;
+    }
+
+    // ================= TRUST SCORE CARD =================
+    private JComponent buildTrustCard() {
+        UITheme.RoundedCardPanel card = new UITheme.RoundedCardPanel();
+        card.setLayout(new BorderLayout(0, 10));
+        card.setBorder(BorderFactory.createEmptyBorder(18, 20, 18, 20));
+
+        JPanel top = new JPanel(new BorderLayout());
+        top.setOpaque(false);
+        JLabel title = new JLabel("Trust Score");
+        title.setFont(UITheme.TITLE_FONT);
+        title.setForeground(UITheme.TEXT_MAIN);
+        top.add(title, BorderLayout.WEST);
+
+        statusBadgeLabel = new JLabel();
+        top.add(statusBadgeLabel, BorderLayout.EAST);
+        card.add(top, BorderLayout.NORTH);
+
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setStringPainted(true);
+        progressBar.setFont(UITheme.BUTTON_FONT);
+        progressBar.setPreferredSize(new Dimension(0, 26));
+        progressBar.setBorder(BorderFactory.createEmptyBorder());
+        card.add(progressBar, BorderLayout.CENTER);
+
+        JPanel statsRow = new JPanel(new GridLayout(1, 2, 20, 0));
+        statsRow.setOpaque(false);
+        statsRow.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+        JPanel givenBox = statBox("🎁 Given", UITheme.SUCCESS);
+        givenValue = (JLabel) ((JPanel) givenBox).getComponent(1);
+        JPanel receivedBox = statBox("📥 Received", UITheme.SECONDARY);
+        receivedValue = (JLabel) ((JPanel) receivedBox).getComponent(1);
+
+        statsRow.add(givenBox);
+        statsRow.add(receivedBox);
+        card.add(statsRow, BorderLayout.SOUTH);
+
+        return card;
+    }
+
+    private JPanel statBox(String caption, Color color) {
+        JPanel box = new JPanel();
+        box.setOpaque(false);
+        box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
+        JLabel cap = new JLabel(caption);
+        cap.setFont(UITheme.SMALL_FONT);
+        cap.setForeground(UITheme.TEXT_MUTED);
+        JLabel val = new JLabel("0");
+        val.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        val.setForeground(color.darker());
+        box.add(cap);
+        box.add(val);
+        return box;
+    }
+
+    // ================= REPORT CARD =================
+    private JComponent buildReportCard() {
+        UITheme.RoundedCardPanel card = new UITheme.RoundedCardPanel();
+        card.setLayout(new BorderLayout(0, 10));
+        card.setBorder(BorderFactory.createEmptyBorder(18, 20, 18, 20));
+
+        JLabel title = new JLabel("⚠ Report a Community Member");
+        title.setFont(UITheme.TITLE_FONT);
+        title.setForeground(UITheme.TEXT_MAIN);
+        card.add(title, BorderLayout.NORTH);
+
+        JPanel comboRow = new JPanel(new BorderLayout(10, 0));
+        comboRow.setOpaque(false);
+        JLabel comboLbl = new JLabel("Select user:");
+        comboLbl.setFont(UITheme.LABEL_FONT);
+        comboRow.add(comboLbl, BorderLayout.WEST);
+        targetUserCombo = new JComboBox<>();
+        targetUserCombo.setFont(UITheme.LABEL_FONT);
+        comboRow.add(targetUserCombo, BorderLayout.CENTER);
+        card.add(comboRow, BorderLayout.CENTER);
+
+        JPanel reportBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        reportBtnPanel.setOpaque(false);
+        reportLateBtn = UITheme.createRoundedButton("⏰ Report Late Return", UITheme.WARNING);
+        reportBtnPanel.add(reportLateBtn);
+
+        reportFakeBtn = UITheme.createRoundedButton("🚫 Report Fake Request", UITheme.DANGER);
+        reportBtnPanel.add(reportFakeBtn);
+
+        card.add(reportBtnPanel, BorderLayout.SOUTH);
+
+        reportLateBtn.addActionListener(e -> reportUser(false));
+        reportFakeBtn.addActionListener(e -> reportUser(true));
+
+        return card;
+    }
+
+    // ================= EDIT PROFILE DIALOG (unchanged logic) =================
     private void editProfile() {
         User user = parent.getCurrentUser();
-        // Create edit dialog
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Profile", true);
         dialog.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -105,17 +201,20 @@ public class TrustPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JTextField nameField = new JTextField(user.getName(), 15);
+        nameField.setBorder(UITheme.TEXT_BORDER);
         JTextField areaField = new JTextField(user.getArea(), 15);
+        areaField.setBorder(UITheme.TEXT_BORDER);
         JTextArea bioArea = new JTextArea(user.getBio(), 3, 20);
         bioArea.setLineWrap(true);
         bioArea.setWrapStyleWord(true);
-        // Skills list
+        bioArea.setBorder(UITheme.TEXT_BORDER);
+
         DefaultListModel<String> skillModel = new DefaultListModel<>();
         for (String s : user.getSkills()) skillModel.addElement(s);
         JList<String> skillList = new JList<>(skillModel);
         JTextField skillAddField = new JTextField(10);
-        JButton addSkillBtn = new JButton("Add");
-        JButton removeSkillBtn = new JButton("Remove Selected");
+        JButton addSkillBtn = UITheme.createRoundedButton("Add", UITheme.SUCCESS);
+        JButton removeSkillBtn = UITheme.createRoundedButton("Remove Selected", UITheme.DANGER);
 
         gbc.gridx = 0; gbc.gridy = 0; dialog.add(new JLabel("Name:"), gbc);
         gbc.gridx = 1; dialog.add(nameField, gbc);
@@ -125,7 +224,7 @@ public class TrustPanel extends JPanel {
         gbc.gridx = 1; dialog.add(new JScrollPane(bioArea), gbc);
         gbc.gridx = 0; gbc.gridy = 3; dialog.add(new JLabel("Skills:"), gbc);
         gbc.gridx = 1; dialog.add(new JScrollPane(skillList), gbc);
-        // Add/remove skills
+
         JPanel skillPanel = new JPanel(new FlowLayout());
         skillPanel.add(skillAddField);
         skillPanel.add(addSkillBtn);
@@ -145,14 +244,9 @@ public class TrustPanel extends JPanel {
             if (idx != -1) skillModel.remove(idx);
         });
 
-        // Save / Cancel buttons
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton saveBtn = new JButton("Save");
-        UITheme.styleButton(saveBtn);
-        saveBtn.setBackground(UITheme.SUCCESS);
-        JButton cancelBtn = new JButton("Cancel");
-        UITheme.styleButton(cancelBtn);
-        cancelBtn.setBackground(UITheme.DANGER);
+        JButton saveBtn = UITheme.createRoundedButton("Save", UITheme.SUCCESS);
+        JButton cancelBtn = UITheme.createRoundedButton("Cancel", UITheme.DANGER);
         btnPanel.add(saveBtn);
         btnPanel.add(cancelBtn);
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
@@ -165,12 +259,10 @@ public class TrustPanel extends JPanel {
             user.setName(nameField.getText().trim());
             user.setArea(areaField.getText().trim());
             user.setBio(bioArea.getText().trim());
-            // Update skills
             user.getSkills().clear();
             for (int i = 0; i < skillModel.size(); i++) {
                 user.getSkills().add(skillModel.get(i));
             }
-            // Save data
             try {
                 parent.getDataStore().saveToFile("civicloop_data.dat");
             } catch (IOException ex) {
@@ -190,7 +282,6 @@ public class TrustPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "No user selected to report.");
             return;
         }
-        // Extract user ID from the combo item (format: "Name (ID)")
         String userId = selected.substring(selected.lastIndexOf('(') + 1, selected.lastIndexOf(')'));
         if (userId.equals(parent.getCurrentUser().getUserId())) {
             JOptionPane.showMessageDialog(this, "You cannot report yourself.");
@@ -210,42 +301,45 @@ public class TrustPanel extends JPanel {
         }
     }
 
+    // ================= REFRESH =================
     public void refresh() {
         User user = parent.getCurrentUser();
         int score = parent.getDataStore().getTrustScore(user.getUserId());
+
+        // Profile card
+        avatarLabel.setIcon(UITheme.avatarCircle(user.getName(), user.getUserId(), 64));
+        nameValue.setText(user.getName());
+        idValue.setText(user.getUserId());
+        areaValue.setText(user.getArea());
+        bioValue.setText((user.getBio() != null && !user.getBio().isEmpty()) ? user.getBio() : "(Not set)");
+        skillsValue.setText(user.getSkills().isEmpty() ? "(None)" : String.join(", ", user.getSkills()));
+
+        // Trust score card — color-coded progress bar
+        Color trustColor = trustColorFor(score);
         progressBar.setValue(score);
-        scoreLabel.setText("Score: " + score + "/100");
+        progressBar.setString(score + " / 100");
+        progressBar.setForeground(trustColor);
 
         String desc;
-        if (score >= 80) desc = "Excellent community member";
-        else if (score >= 50) desc = "Good standing";
-        else if (score >= 30) desc = "Low trust – be cautious";
-        else desc = "Very low trust – unreliable";
-        statusLabel.setText(desc);
+        if (score >= 80) desc = "Excellent";
+        else if (score >= 50) desc = "Good Standing";
+        else if (score >= 30) desc = "Low Trust";
+        else desc = "Unreliable";
+        statusBadgeLabel.setIcon(null);
+        statusBadgeLabel.setText(null);
+        statusBadgeLabel.removeAll();
+        statusBadgeLabel = swapBadge(statusBadgeLabel, desc, trustColor);
 
-        // Profile display
-        StringBuilder sb = new StringBuilder();
-        sb.append("👤 Name: ").append(user.getName()).append("\n");
-        sb.append("📍 Area: ").append(user.getArea()).append("\n");
-        sb.append("🆔 User ID: ").append(user.getUserId()).append("\n");
-        sb.append("📝 Bio: ").append(user.getBio() != null ? user.getBio() : "(Not set)").append("\n");
-        sb.append("🛠 Skills: ");
-        if (user.getSkills().isEmpty()) {
-            sb.append("(None)");
-        } else {
-            sb.append(String.join(", ", user.getSkills()));
-        }
-        sb.append("\n\n📊 Transaction Stats:\n");
+        // Transaction stats
         int given = 0, received = 0;
         for (var tx : parent.getDataStore().getTransactions()) {
             if (tx.getFromUserId().equals(user.getUserId())) given++;
             if (tx.getToUserId().equals(user.getUserId())) received++;
         }
-        sb.append("  • Items/Services given: ").append(given).append("\n");
-        sb.append("  • Items/Services received: ").append(received);
-        profileArea.setText(sb.toString());
+        givenValue.setText(String.valueOf(given));
+        receivedValue.setText(String.valueOf(received));
 
-        // Update combo with all users except self
+        // Report combo
         targetUserCombo.removeAllItems();
         for (User u : parent.getDataStore().getAllUsers().values()) {
             if (!u.getUserId().equals(user.getUserId())) {
@@ -255,5 +349,28 @@ public class TrustPanel extends JPanel {
         if (targetUserCombo.getItemCount() == 0) {
             targetUserCombo.addItem("(No other users)");
         }
+    }
+
+    private Color trustColorFor(int score) {
+        if (score >= 80) return UITheme.SUCCESS;
+        if (score >= 50) return UITheme.SECONDARY;
+        if (score >= 30) return UITheme.WARNING;
+        return UITheme.DANGER;
+    }
+
+    /**
+     * Replaces the status badge label's rendering by building a fresh
+     * UITheme.statusBadge and swapping it into the same parent container.
+     */
+    private JLabel swapBadge(JLabel oldLabel, String text, Color color) {
+        JLabel newBadge = UITheme.statusBadge(text.toUpperCase(), color);
+        Container parentContainer = oldLabel.getParent();
+        if (parentContainer != null) {
+            parentContainer.remove(oldLabel);
+            parentContainer.add(newBadge, BorderLayout.EAST);
+            parentContainer.revalidate();
+            parentContainer.repaint();
+        }
+        return newBadge;
     }
 }
