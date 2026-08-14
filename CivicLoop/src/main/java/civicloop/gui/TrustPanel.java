@@ -1,10 +1,13 @@
 package civicloop.gui;
 
+import civicloop.model.TimeCreditTransaction;
 import civicloop.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrustPanel extends JPanel {
     private MainFrame parent;
@@ -15,7 +18,12 @@ public class TrustPanel extends JPanel {
     private JLabel givenValue, receivedValue;
     private JButton editProfileBtn;
     private JComboBox<String> targetUserCombo;
-    private JButton reportLateBtn, reportFakeBtn;
+    private JButton reportBtn;
+
+    // NEW: backs the combo box with the actual transaction objects so a
+    // report can be tied to ONE specific transaction instead of a user.
+    // Index in this list always matches the selected index in targetUserCombo.
+    private List<TimeCreditTransaction> reportableTransactions = new ArrayList<>();
 
     public TrustPanel(MainFrame parent) {
         this.parent = parent;
@@ -61,8 +69,8 @@ public class TrustPanel extends JPanel {
         nameValue.setFont(UITheme.TITLE_FONT);
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         infoGrid.add(nameValue, gbc);
-
         gbc.gridwidth = 1;
+
         gbc.gridy = 1;
         gbc.gridx = 0; infoGrid.add(captionLabel("🆔 ID"), gbc);
         gbc.gridx = 1; idValue = valueLabel(""); infoGrid.add(idValue, gbc);
@@ -215,7 +223,7 @@ public class TrustPanel extends JPanel {
 
         JPanel comboRow = new JPanel(new BorderLayout(10, 0));
         comboRow.setOpaque(false);
-        JLabel comboLbl = new JLabel("👤 Select user:");
+        JLabel comboLbl = new JLabel("🧾 Select transaction:");
         comboLbl.setFont(UITheme.LABEL_FONT);
         comboRow.add(comboLbl, BorderLayout.WEST);
         targetUserCombo = new JComboBox<>();
@@ -225,16 +233,11 @@ public class TrustPanel extends JPanel {
 
         JPanel reportBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         reportBtnPanel.setOpaque(false);
-        reportLateBtn = UITheme.createRoundedButton("⏰ Report Late Return", UITheme.WARNING);
-        reportBtnPanel.add(reportLateBtn);
-
-        reportFakeBtn = UITheme.createRoundedButton("🚫 Report Fake Request", UITheme.DANGER);
-        reportBtnPanel.add(reportFakeBtn);
-
+        reportBtn = UITheme.createRoundedButton("🚫 Report", UITheme.DANGER);
+        reportBtnPanel.add(reportBtn);
         card.add(reportBtnPanel, BorderLayout.SOUTH);
 
-        reportLateBtn.addActionListener(e -> reportUser(false));
-        reportFakeBtn.addActionListener(e -> reportUser(true));
+        reportBtn.addActionListener(e -> reportUser());
 
         return card;
     }
@@ -266,10 +269,13 @@ public class TrustPanel extends JPanel {
 
         gbc.gridx = 0; gbc.gridy = 0; dialog.add(new JLabel("🙍 Name:"), gbc);
         gbc.gridx = 1; dialog.add(nameField, gbc);
+
         gbc.gridx = 0; gbc.gridy = 1; dialog.add(new JLabel("📍 Area:"), gbc);
         gbc.gridx = 1; dialog.add(areaField, gbc);
+
         gbc.gridx = 0; gbc.gridy = 2; dialog.add(new JLabel("📝 Bio:"), gbc);
         gbc.gridx = 1; dialog.add(new JScrollPane(bioEditArea), gbc);
+
         gbc.gridx = 0; gbc.gridy = 3; dialog.add(new JLabel("🛠 Skills:"), gbc);
         gbc.gridx = 1; dialog.add(new JScrollPane(skillList), gbc);
 
@@ -324,28 +330,45 @@ public class TrustPanel extends JPanel {
         dialog.setVisible(true);
     }
 
-    private void reportUser(boolean fake) {
-        String selected = (String) targetUserCombo.getSelectedItem();
-        if (selected == null) {
-            JOptionPane.showMessageDialog(this, "No user selected to report.");
+    // ================= REPORT ACTION (transaction-based, one report per transaction) =================
+    /**
+     * Only the person who offered the item/service (the transaction's
+     * toUserId — owner or provider) may report the borrower/seeker
+     * (fromUserId). refresh() already filters the combo to only such
+     * transactions, so any selected entry here is always valid.
+     */
+    private void reportUser() {
+        int idx = targetUserCombo.getSelectedIndex();
+        if (idx < 0 || idx >= reportableTransactions.size()) {
+            JOptionPane.showMessageDialog(this,
+                    "No reportable transaction selected. You can only report a transaction where you offered the item/service, and only once.");
             return;
         }
-        String userId = selected.substring(selected.lastIndexOf('(') + 1, selected.lastIndexOf(')'));
-        if (userId.equals(parent.getCurrentUser().getUserId())) {
-            JOptionPane.showMessageDialog(this, "You cannot report yourself.");
-            return;
-        }
+
+        TimeCreditTransaction t = reportableTransactions.get(idx);
+        String myId = parent.getCurrentUser().getUserId();
+        String otherId = t.getFromUserId(); // the borrower/seeker being reported
+        User other = parent.getDataStore().findUser(otherId);
+        String otherName = other != null ? other.getName() : otherId;
+
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Report " + selected + " for " + (fake ? "fake request" : "late return") + "?",
+                "Report " + otherName + " (" + otherId + ") on transaction #"
+                        + t.getTransactionId() + "?",
                 "Confirm Report", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            if (fake) {
-                parent.getDataStore().reportFakeRequest(userId);
-            } else {
-                parent.getDataStore().reportLateReturn(userId);
-            }
-            parent.refreshAll();
-            JOptionPane.showMessageDialog(this, "Report submitted.");
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        String result = parent.getDataStore().reportTransaction(t.getTransactionId(), myId);
+
+        saveData();
+        parent.refreshAll();
+        JOptionPane.showMessageDialog(this, result);
+    }
+
+    private void saveData() {
+        try {
+            parent.getDataStore().saveToFile("civicloop_data.dat");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Could not save data: " + ex.getMessage());
         }
     }
 
@@ -385,14 +408,27 @@ public class TrustPanel extends JPanel {
         givenValue.setText(String.valueOf(given));
         receivedValue.setText(String.valueOf(received));
 
+        // NEW: populate combo with individual, not-yet-reported transactions
+        // where THIS user was the offerer (item owner / service provider) —
+        // only the offerer may report the borrower/seeker on that transaction.
         targetUserCombo.removeAllItems();
-        for (User u : parent.getDataStore().getAllUsers().values()) {
-            if (!u.getUserId().equals(user.getUserId())) {
-                targetUserCombo.addItem(u.getName() + " (" + u.getUserId() + ")");
-            }
+        reportableTransactions = new ArrayList<>();
+        String myId = user.getUserId();
+        for (TimeCreditTransaction t : parent.getDataStore().getTransactions()) {
+            if (t.isReported()) continue;
+            if (!t.getToUserId().equals(myId)) continue; // must be the offerer
+
+            String otherId = t.getFromUserId(); // borrower/seeker
+            User other = parent.getDataStore().findUser(otherId);
+            String otherName = other != null ? other.getName() : otherId;
+
+            reportableTransactions.add(t);
+            targetUserCombo.addItem("#" + TimeBankPanel.formatTransactionId(t.getTransactionId())
+                    + " - " + otherName + " (" + otherId + ") - "
+                    + t.getType() + " - " + t.getHoursSpent() + " hrs");
         }
         if (targetUserCombo.getItemCount() == 0) {
-            targetUserCombo.addItem("(No other users)");
+            targetUserCombo.addItem("(No reportable transactions)");
         }
     }
 

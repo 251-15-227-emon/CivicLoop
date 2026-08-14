@@ -24,8 +24,9 @@ public class DataStore implements Serializable {
 
     public static final int TRUST_INCREASE_BORROW = 5;
     public static final int TRUST_INCREASE_SERVICE = 5;
-    public static final int TRUST_DECREASE_LATE_RETURN = 3;
-    public static final int TRUST_DECREASE_FAKE_REQUEST = 10;
+    public static final int TRUST_DECREASE_LATE_RETURN = 3;   // unused now, kept for compatibility
+    public static final int TRUST_DECREASE_FAKE_REQUEST = 10; // unused now, kept for compatibility
+    public static final int TRUST_DECREASE_REPORT = 10;       // NEW: single fixed report penalty
     public static final int TRUST_INCREASE_RETURN = 2;
     public static final double INITIAL_TC = 10.0;
 
@@ -199,23 +200,37 @@ public class DataStore implements Serializable {
         return null;
     }
 
-    // ---- Trust reports (target another user) ----
-    public void reportLateReturn(String targetUserId) {
+    // ---- Trust report (single type, tied to ONE transaction) ----
+    /**
+     * Reports the OTHER party of a transaction. Only the person who
+     * offered the item/service (transaction's toUserId — the owner or
+     * provider) is allowed to file the report, against the borrower/
+     * seeker (fromUserId). Fixed score penalty. A transaction can only
+     * ever be reported once.
+     */
+    public String reportTransaction(String transactionId, String reporterId) {
+        TimeCreditTransaction t = findTransactionById(transactionId);
+        if (t == null) return "Transaction not found.";
+        if (t.isReported()) return "This transaction has already been reported.";
+        if (!t.getToUserId().equals(reporterId))
+            return "Only the person who offered the item/service can report this transaction.";
+
+        String targetUserId = t.getFromUserId();
         TrustScoreManager tm = trustManagers.get(targetUserId);
         if (tm != null) {
-            tm.decreaseScore(TRUST_DECREASE_LATE_RETURN);
+            tm.decreaseScore(TRUST_DECREASE_REPORT);
             User u = findUser(targetUserId);
             if (u != null) u.setTrustScore(tm.getScore());
         }
+        t.markReported();
+        return "Report submitted.";
     }
 
-    public void reportFakeRequest(String targetUserId) {
-        TrustScoreManager tm = trustManagers.get(targetUserId);
-        if (tm != null) {
-            tm.decreaseScore(TRUST_DECREASE_FAKE_REQUEST);
-            User u = findUser(targetUserId);
-            if (u != null) u.setTrustScore(tm.getScore());
+    private TimeCreditTransaction findTransactionById(String id) {
+        for (TimeCreditTransaction t : transactions) {
+            if (t.getTransactionId().equals(id)) return t;
         }
+        return null;
     }
 
     // ---- Community Feed ----
@@ -235,10 +250,17 @@ public class DataStore implements Serializable {
         }
     }
 
+    /**
+     * Adds a comment to a post. Stored as "commenterId|timestamp|commentText"
+     * so FeedPanel can show name/id + time on one line (post-card style).
+     * The "|" delimiter is chosen because it won't normally appear in
+     * plain comment text typed by users.
+     */
     public void addCommentToPost(String postId, String commenterId, String comment) {
+        String timestamp = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date());
         for (CommunityPost p : posts) {
             if (p.getPostId().equals(postId)) {
-                p.addComment(commenterId + ": " + comment);
+                p.addComment(commenterId + "|" + timestamp + "|" + comment);
                 break;
             }
         }
@@ -266,6 +288,21 @@ public class DataStore implements Serializable {
             }
         }
         return busy;
+    }
+
+    /**
+     * Returns true if there is at least one recorded transaction (item
+     * borrow or service request) between the two given users, in either
+     * direction. Kept for compatibility; no longer used by the report
+     * flow (which is now transaction-based), but harmless to keep.
+     */
+    public boolean hasTransactionWith(String userIdA, String userIdB) {
+        for (TimeCreditTransaction t : transactions) {
+            boolean pair = (t.getFromUserId().equals(userIdA) && t.getToUserId().equals(userIdB))
+                    || (t.getFromUserId().equals(userIdB) && t.getToUserId().equals(userIdA));
+            if (pair) return true;
+        }
+        return false;
     }
 
     // ---- Persistence ----

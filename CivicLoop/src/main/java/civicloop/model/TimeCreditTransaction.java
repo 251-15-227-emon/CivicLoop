@@ -3,12 +3,13 @@ package civicloop.model;
 import java.io.Serializable;
 
 public class TimeCreditTransaction implements Serializable {
-    private String transactionId;
+private String transactionId;
     private String fromUserId;
     private String toUserId;
     private double hoursSpent;
     private double creditAmount;
     private String type;
+    private boolean reported; // NEW: prevents reporting the same transaction more than once
 
     public TimeCreditTransaction(String transactionId, String fromUserId, String toUserId,
                                  double hoursSpent, Creditable offer) {
@@ -18,6 +19,7 @@ public class TimeCreditTransaction implements Serializable {
         this.hoursSpent = hoursSpent;
         this.creditAmount = hoursSpent * offer.getCreditRate();
         this.type = offer.getOfferType();
+        this.reported = false;
     }
 
     // Getters (unchanged)
@@ -27,6 +29,10 @@ public class TimeCreditTransaction implements Serializable {
     public double getHoursSpent() { return hoursSpent; }
     public double getCreditAmount() { return creditAmount; }
     public String getType() { return type; }
+
+    // NEW: report-once tracking
+    public boolean isReported() { return reported; }
+    public void markReported() { this.reported = true; }
 
     @Override
     public String toString() {
