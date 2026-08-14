@@ -297,6 +297,7 @@ public class DataStore implements Serializable {
      * direction. Kept for compatibility; no longer used by the report
      * flow (which is now transaction-based), but harmless to keep.
      */
+    
     public boolean hasTransactionWith(String userIdA, String userIdB) {
         for (TimeCreditTransaction t : transactions) {
             boolean pair = (t.getFromUserId().equals(userIdA) && t.getToUserId().equals(userIdB))
