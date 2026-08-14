@@ -66,6 +66,7 @@ public class DataStore implements Serializable {
         return null;
     }
 
+
     // ---- Login ----
     public User login(String userId, String password) {
         User u = users.get(userId);
@@ -209,7 +210,7 @@ public class DataStore implements Serializable {
      * seeker (fromUserId). Fixed score penalty. A transaction can only
      * ever be reported once.
      */
-    
+
     public String reportTransaction(String transactionId, String reporterId) {
         TimeCreditTransaction t = findTransactionById(transactionId);
         if (t == null) return "Transaction not found.";
