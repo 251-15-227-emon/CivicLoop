@@ -160,6 +160,7 @@ public class LoginFrame extends JFrame {
         return wrap;
     }
 
+
     // ---- Register form ----
     private JPanel createRegisterPanel() {
         JPanel panel = new JPanel();
@@ -220,6 +221,7 @@ public class LoginFrame extends JFrame {
      * in the normal theme font. Fixes emoji showing as blank boxes (□) on
      * some Windows/JDK setups.
      */
+    
     private JLabel fieldLabel(String emoji, String text) {
         JLabel l = new JLabel(UITheme.iconText(emoji, text));
         l.setFont(UITheme.SMALL_FONT);

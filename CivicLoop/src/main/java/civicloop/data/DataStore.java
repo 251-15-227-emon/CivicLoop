@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class DataStore implements Serializable {
 
     private HashMap<String, User> users;
@@ -64,6 +65,7 @@ public class DataStore implements Serializable {
         }
         return null;
     }
+
 
     // ---- Login ----
     public User login(String userId, String password) {
@@ -208,6 +210,7 @@ public class DataStore implements Serializable {
      * seeker (fromUserId). Fixed score penalty. A transaction can only
      * ever be reported once.
      */
+
     public String reportTransaction(String transactionId, String reporterId) {
         TimeCreditTransaction t = findTransactionById(transactionId);
         if (t == null) return "Transaction not found.";
@@ -296,6 +299,7 @@ public class DataStore implements Serializable {
      * direction. Kept for compatibility; no longer used by the report
      * flow (which is now transaction-based), but harmless to keep.
      */
+
     public boolean hasTransactionWith(String userIdA, String userIdB) {
         for (TimeCreditTransaction t : transactions) {
             boolean pair = (t.getFromUserId().equals(userIdA) && t.getToUserId().equals(userIdB))
@@ -332,5 +336,7 @@ public class DataStore implements Serializable {
         this.nextServiceId = loaded.nextServiceId;
         this.nextTransactionId = loaded.nextTransactionId;
         this.nextPostId = loaded.nextPostId;
+
+
     }
 }
