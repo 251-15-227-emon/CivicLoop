@@ -194,7 +194,7 @@ public class FeedPanel extends JPanel {
     private class PostCardRenderer extends JPanel implements ListCellRenderer<CommunityPost> {
         private final JLabel avatarLabel, authorLabel, metaLabel;
         private final JTextArea contentArea;
-        private final JPanel statsRow;         // stable field — no fragile getParent() lookups
+        private final JPanel statsRow;         
         private final JPanel commentsWrapper;
 
         PostCardRenderer() {
