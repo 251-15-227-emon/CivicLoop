@@ -80,6 +80,61 @@ The project was developed by a **five-member student team** as part of the **CSE
 * 💾 **Persistent Data Using Serialization**
 
 ---
+---
+
+## 🖼️ 4. Application Screenshots
+
+CivicLoop provides a desktop-based interface for managing community resources, user accounts, TimeCredits, and community interactions.
+
+### 🔐 Login & Registration
+
+<p align="center">
+  <img src="screenshots/LOGIN%20and%20SIGNUP%20page.jpg" width="850">
+</p>
+
+<p align="center">
+  <em>Login and user registration interface</em>
+</p>
+
+---
+
+### 📦 Item Sharing
+
+<p align="center">
+  <img src="screenshots/ITEM_LIST.jpg" width="850">
+</p>
+
+<p align="center">
+  <em>Community item listing and resource-sharing interface</em>
+</p>
+
+---
+
+### 📰 Community Feed
+
+<p align="center">
+  <img src="screenshots/community%20feed.jpg" width="850">
+</p>
+
+<p align="center">
+  <em>Community feed for posts and social interactions</em>
+</p>
+
+---
+
+### ⏱️ TimeCredit & Transaction History
+
+<p align="center">
+  <img src="screenshots/credit%20and%20history.jpg" width="850">
+</p>
+
+<p align="center">
+  <em>TimeCredit balance and transaction history</em>
+</p>
+
+---
+
+---
 
 ## 🛠️ 3. Installation & Running
 
