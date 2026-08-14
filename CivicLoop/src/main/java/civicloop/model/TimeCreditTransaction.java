@@ -9,7 +9,7 @@ private String transactionId;
     private double hoursSpent;
     private double creditAmount;
     private String type;
-    private boolean reported;  once
+    private boolean reported;
 
     public TimeCreditTransaction(String transactionId, String fromUserId, String toUserId,
                                  double hoursSpent, Creditable offer) {
