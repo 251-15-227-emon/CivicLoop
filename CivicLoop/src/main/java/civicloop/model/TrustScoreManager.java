@@ -20,6 +20,7 @@ public class TrustScoreManager implements Serializable {
         score -= amount;
         if (score < 0) score = 0;
     }
+    
 
     public int getScore() { return score; }
     public String getUserId() { return userId; }
