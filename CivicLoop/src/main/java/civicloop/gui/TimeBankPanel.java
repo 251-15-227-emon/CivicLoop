@@ -64,6 +64,7 @@ public class TimeBankPanel extends JPanel {
 
         return card;
     }
+    
 
     // ================= REFRESH =================
     public void refresh() {
