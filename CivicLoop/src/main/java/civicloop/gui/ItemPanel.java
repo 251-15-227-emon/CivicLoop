@@ -42,20 +42,20 @@ public class ItemPanel extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
         buttonPanel.setOpaque(false);
 
-        JButton addBtn = UITheme.createRoundedButton("➕ Add Item", UITheme.PRIMARY);
+        JButton addBtn = UITheme.createRoundedButton(UITheme.iconText("➕", "Add Item"), UITheme.PRIMARY);
         buttonPanel.add(addBtn);
 
-        JButton requestBtn = UITheme.createRoundedButton("🤝 Request Selected", UITheme.SECONDARY);
+        JButton requestBtn = UITheme.createRoundedButton(UITheme.iconText("🤝", "Request Selected"), UITheme.SECONDARY);
         buttonPanel.add(requestBtn);
 
-        JButton returnBtn = UITheme.createRoundedButton("↩ Return Selected", UITheme.SUCCESS);
+        JButton returnBtn = UITheme.createRoundedButton(UITheme.iconText("↩", "Return Selected"), UITheme.SUCCESS);
         buttonPanel.add(returnBtn);
 
         bottom.add(buttonPanel, BorderLayout.WEST);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
         searchPanel.setOpaque(false);
-        JLabel searchLbl = new JLabel("🔎 Search by Owner:");
+        JLabel searchLbl = new JLabel(UITheme.iconText("🔎", "Search by Owner:"));
         searchLbl.setFont(UITheme.SMALL_FONT);
         searchLbl.setForeground(UITheme.TEXT_MUTED);
         searchPanel.add(searchLbl);
@@ -63,9 +63,9 @@ public class ItemPanel extends JPanel {
         searchField.setFont(UITheme.LABEL_FONT);
         searchField.setBorder(UITheme.TEXT_BORDER);
         searchPanel.add(searchField);
-        JButton searchBtn = UITheme.createRoundedButton("🔍 Search", UITheme.PRIMARY_DARK);
+        JButton searchBtn = UITheme.createRoundedButton(UITheme.iconText("🔍", "Search"), UITheme.PRIMARY_DARK);
         searchPanel.add(searchBtn);
-        JButton clearBtn = UITheme.createRoundedButton("✕ Clear", UITheme.WARNING);
+        JButton clearBtn = UITheme.createRoundedButton(UITheme.iconText("✕", "Clear"), UITheme.WARNING);
         searchPanel.add(clearBtn);
 
         bottom.add(searchPanel, BorderLayout.EAST);
@@ -222,7 +222,7 @@ public class ItemPanel extends JPanel {
 
             nameLabel.setText(item.getItemName());
             idTag.setText("#" + formatItemId(item.getItemId()));
-            ownerLabel.setText("👤 Owned by " + ownerName);
+            ownerLabel.setText(UITheme.iconText("👤", "Owned by " + ownerName));
 
             statusHolder.removeAll();
             String status = item.isAvailable() ? "AVAILABLE" : "BORROWED";

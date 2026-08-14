@@ -60,7 +60,7 @@ public class FeedPanel extends JPanel {
         // ---- New post block ----
         JPanel postBlock = new JPanel(new BorderLayout(0, 6));
         postBlock.setOpaque(false);
-        JLabel postCaption = new JLabel("✍ New Post");
+        JLabel postCaption = new JLabel(UITheme.iconText("✍", "New Post"));
         postCaption.setFont(UITheme.SMALL_FONT.deriveFont(Font.BOLD, 11f));
         postCaption.setForeground(UITheme.TEXT_MUTED);
         postBlock.add(postCaption, BorderLayout.NORTH);
@@ -74,7 +74,7 @@ public class FeedPanel extends JPanel {
         postScroll.setBorder(BorderFactory.createEmptyBorder());
         postBlock.add(postScroll, BorderLayout.CENTER);
 
-        JButton postBtn = UITheme.createRoundedButton("📤 Post", UITheme.PRIMARY);
+        JButton postBtn = UITheme.createRoundedButton(UITheme.iconText("📤", "Post"), UITheme.PRIMARY);
         JPanel postBtnWrap = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 6));
         postBtnWrap.setOpaque(false);
         postBtnWrap.add(postBtn);
@@ -84,7 +84,7 @@ public class FeedPanel extends JPanel {
         // ---- Comment block ----
         JPanel commentBlock = new JPanel(new BorderLayout(0, 6));
         commentBlock.setOpaque(false);
-        JLabel commentCaption = new JLabel("💬 Add Comment (select a post)");
+        JLabel commentCaption = new JLabel(UITheme.iconText("💬", "Add Comment (select a post)"));
         commentCaption.setFont(UITheme.SMALL_FONT.deriveFont(Font.BOLD, 11f));
         commentCaption.setForeground(UITheme.TEXT_MUTED);
         commentBlock.add(commentCaption, BorderLayout.NORTH);
@@ -98,7 +98,7 @@ public class FeedPanel extends JPanel {
         commentScroll.setBorder(BorderFactory.createEmptyBorder());
         commentBlock.add(commentScroll, BorderLayout.CENTER);
 
-        JButton commentBtn = UITheme.createRoundedButton("💬 Comment", UITheme.SECONDARY);
+        JButton commentBtn = UITheme.createRoundedButton(UITheme.iconText("💬", "Comment"), UITheme.SECONDARY);
         JPanel commentBtnWrap = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 6));
         commentBtnWrap.setOpaque(false);
         commentBtnWrap.add(commentBtn);
@@ -113,7 +113,7 @@ public class FeedPanel extends JPanel {
     private JComponent buildSearchRow() {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         searchPanel.setOpaque(false);
-        JLabel searchLbl = new JLabel("🔎 Search by Author:");
+        JLabel searchLbl = new JLabel(UITheme.iconText("🔎", "Search by Author:"));
         searchLbl.setFont(UITheme.SMALL_FONT);
         searchLbl.setForeground(UITheme.TEXT_MUTED);
         searchPanel.add(searchLbl);
@@ -121,9 +121,9 @@ public class FeedPanel extends JPanel {
         searchField.setFont(UITheme.LABEL_FONT);
         searchField.setBorder(UITheme.TEXT_BORDER);
         searchPanel.add(searchField);
-        JButton searchBtn = UITheme.createRoundedButton("🔍 Search", UITheme.PRIMARY_DARK);
+        JButton searchBtn = UITheme.createRoundedButton(UITheme.iconText("🔍", "Search"), UITheme.PRIMARY_DARK);
         searchPanel.add(searchBtn);
-        JButton clearBtn = UITheme.createRoundedButton("✕ Clear", UITheme.WARNING);
+        JButton clearBtn = UITheme.createRoundedButton(UITheme.iconText("✕", "Clear"), UITheme.WARNING);
         searchPanel.add(clearBtn);
 
         searchBtn.addActionListener(e -> refresh());
@@ -260,13 +260,13 @@ public class FeedPanel extends JPanel {
 
             avatarLabel.setIcon(UITheme.avatarCircle(authorName, post.getAuthorId(), 40));
             authorLabel.setText(authorName + "  #" + post.getAuthorId());
-            metaLabel.setText("🕒 " + post.getTimestamp());
+            metaLabel.setText(UITheme.iconText("🕒", post.getTimestamp()));
             contentArea.setText(post.getContent());
 
             // Stat badges — statsRow is now a stable field, never null
             statsRow.removeAll();
-            statsRow.add(UITheme.statusBadge("♥ " + post.getLikes(), UITheme.DANGER));
-            statsRow.add(UITheme.statusBadge("💬 " + post.getComments().size(), UITheme.SECONDARY));
+            statsRow.add(UITheme.statusBadge(UITheme.iconText("♥", String.valueOf(post.getLikes())), UITheme.DANGER));
+            statsRow.add(UITheme.statusBadge(UITheme.iconText("💬", String.valueOf(post.getComments().size())), UITheme.SECONDARY));
 
             // Comment bubbles (max 3 shown, rest summarized)
             commentsWrapper.removeAll();

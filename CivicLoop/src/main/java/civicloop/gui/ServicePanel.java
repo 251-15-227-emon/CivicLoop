@@ -39,17 +39,17 @@ public class ServicePanel extends JPanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
         buttonPanel.setOpaque(false);
-        JButton offerBtn = UITheme.createRoundedButton("➕ Offer Service", UITheme.PRIMARY);
+        JButton offerBtn = UITheme.createRoundedButton(UITheme.iconText("➕", "Offer Service"), UITheme.PRIMARY);
         buttonPanel.add(offerBtn);
-        JButton requestBtn = UITheme.createRoundedButton("🤝 Request Selected", UITheme.SECONDARY);
+        JButton requestBtn = UITheme.createRoundedButton(UITheme.iconText("🤝", "Request Selected"), UITheme.SECONDARY);
         buttonPanel.add(requestBtn);
-        JButton completeBtn = UITheme.createRoundedButton("✔ Complete Selected", UITheme.SUCCESS);
+        JButton completeBtn = UITheme.createRoundedButton(UITheme.iconText("✔", "Complete Selected"), UITheme.SUCCESS);
         buttonPanel.add(completeBtn);
         bottom.add(buttonPanel, BorderLayout.WEST);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
         searchPanel.setOpaque(false);
-        JLabel searchLbl = new JLabel("🔎 Search by Provider:");
+        JLabel searchLbl = new JLabel(UITheme.iconText("🔎", "Search by Provider:"));
         searchLbl.setFont(UITheme.SMALL_FONT);
         searchLbl.setForeground(UITheme.TEXT_MUTED);
         searchPanel.add(searchLbl);
@@ -57,9 +57,9 @@ public class ServicePanel extends JPanel {
         searchField.setFont(UITheme.LABEL_FONT);
         searchField.setBorder(UITheme.TEXT_BORDER);
         searchPanel.add(searchField);
-        JButton searchBtn = UITheme.createRoundedButton("🔍 Search", UITheme.PRIMARY_DARK);
+        JButton searchBtn = UITheme.createRoundedButton(UITheme.iconText("🔍", "Search"), UITheme.PRIMARY_DARK);
         searchPanel.add(searchBtn);
-        JButton clearBtn = UITheme.createRoundedButton("✕ Clear", UITheme.WARNING);
+        JButton clearBtn = UITheme.createRoundedButton(UITheme.iconText("✕", "Clear"), UITheme.WARNING);
         searchPanel.add(clearBtn);
         bottom.add(searchPanel, BorderLayout.EAST);
         add(bottom, BorderLayout.SOUTH);
@@ -214,7 +214,7 @@ public class ServicePanel extends JPanel {
 
             typeLabel.setText(service.getServiceType());
             idTag.setText("#" + formatServiceId(service.getServiceId()));
-            providerLabel.setText("👤 Provided by " + providerName);
+            providerLabel.setText(UITheme.iconText("👤", "Provided by " + providerName));
 
             statusHolder.removeAll();
             String status = service.isAvailable() ? "AVAILABLE" : "BUSY";

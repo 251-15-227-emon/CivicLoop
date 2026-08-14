@@ -84,7 +84,7 @@ public class MainFrame extends JFrame {
         JPanel rightButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightButtons.setOpaque(false);
 
-        refreshBtn = UITheme.createRoundedButton("↻ Refresh", UITheme.SUCCESS);
+        refreshBtn = UITheme.createRoundedButton(UITheme.iconText("↻", "Refresh"), UITheme.SUCCESS);
         rightButtons.add(refreshBtn);
 
         logoutBtn = UITheme.createRoundedButton("Logout", UITheme.DANGER);
@@ -137,11 +137,11 @@ public class MainFrame extends JFrame {
         trustPanel = new TrustPanel(this);
         feedPanel = new FeedPanel(this);
 
-        tabs.addTab("📦  Item Sharing", itemPanel);
-        tabs.addTab("🛠️  Service Exchange", servicePanel);
-        tabs.addTab("💰  TimeBank", timeBankPanel);
-        tabs.addTab("⭐  Trust & Profile", trustPanel);
-        tabs.addTab("📢  Community Feed", feedPanel);
+        tabs.addTab(UITheme.iconText("📦", "Item Sharing"), itemPanel);
+        tabs.addTab(UITheme.iconText("🛠️", "Service Exchange"), servicePanel);
+        tabs.addTab(UITheme.iconText("💰", "TimeBank"), timeBankPanel);
+        tabs.addTab(UITheme.iconText("⭐", "Trust & Profile"), trustPanel);
+        tabs.addTab(UITheme.iconText("📢", "Community Feed"), feedPanel);
 
         return tabs;
     }
@@ -160,7 +160,7 @@ public class MainFrame extends JFrame {
     public void refreshAll() {
         avatarLabel.setIcon(UITheme.avatarCircle(currentUser.getName(), currentUser.getUserId(), 52));
         nameLabel.setText(currentUser.getName() + "  (" + currentUser.getUserId() + ")");
-        areaLabel.setText("📍 " + currentUser.getArea());
+        areaLabel.setText(UITheme.iconText("📍", currentUser.getArea()));
 
         tcChip.setValue(String.valueOf(currentUser.getTimeCreditBalance()) + " TC");
         trustChip.setValue(currentUser.getTrustScore() + " / 100");
@@ -230,7 +230,7 @@ public class MainFrame extends JFrame {
             g2.fill(new RoundRectangle2D.Float(0, 0, 6, h, 16, 16));
             g2.fillRect(0, 0, 10, h); // square off the strip's right edge
 
-            // Icon
+            // Icon — drawn with an emoji-capable font directly (not HTML, since this is custom painting)
             g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 22));
             g2.drawString(icon, 16, h / 2 + 8);
 

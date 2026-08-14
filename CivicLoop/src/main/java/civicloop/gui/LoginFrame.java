@@ -123,12 +123,12 @@ public class LoginFrame extends JFrame {
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-       panel.add(fieldLabel("🆔 User ID"));    
+        panel.add(fieldLabel("🆔", "User ID"));
         userIdField = styledTextField();
         panel.add(userIdField);
         panel.add(Box.createVerticalStrut(14));
 
-        panel.add(fieldLabel("🔒 Password"));
+        panel.add(fieldLabel("🔒", "Password"));
         passwordField = styledPasswordField();
         panel.add(passwordField);
         panel.add(Box.createVerticalStrut(26));
@@ -166,17 +166,17 @@ public class LoginFrame extends JFrame {
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        panel.add(fieldLabel("🙍 Full Name"));
+        panel.add(fieldLabel("🙍", "Full Name"));
         nameField = styledTextField();
         panel.add(nameField);
         panel.add(Box.createVerticalStrut(12));
 
-        panel.add(fieldLabel("📍 Area"));
+        panel.add(fieldLabel("📍", "Area"));
         areaField = styledTextField();
         panel.add(areaField);
         panel.add(Box.createVerticalStrut(12));
 
-        panel.add(fieldLabel("🔒 Password"));
+        panel.add(fieldLabel("🔒", "Password"));
         regPasswordField = styledPasswordField();
         panel.add(regPasswordField);
         panel.add(Box.createVerticalStrut(22));
@@ -213,28 +213,21 @@ public class LoginFrame extends JFrame {
         return wrap;
     }
 
-    private JComponent fieldLabel(String text) {
-    // text like "🆔 User ID" -> split emoji and label text
-    int spaceIdx = text.indexOf(' ');
-    String emoji = text.substring(0, spaceIdx);
-    String rest = text.substring(spaceIdx + 1);
-
-    JPanel wrap = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-    wrap.setOpaque(false);
-    wrap.setAlignmentX(Component.LEFT_ALIGNMENT);
-    wrap.setBorder(BorderFactory.createEmptyBorder(0, 2, 4, 0));
-
-    JLabel iconL = new JLabel(emoji);
-    iconL.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
-
-    JLabel textL = new JLabel(rest);
-    textL.setFont(UITheme.SMALL_FONT);
-    textL.setForeground(UITheme.TEXT_MUTED);
-
-    wrap.add(iconL);
-    wrap.add(textL);
-    return wrap;
-}
+    // ---- Small styled helpers ----
+    /**
+     * Builds a field caption label with an emoji icon + text, keeping the
+     * emoji in an emoji-capable font ("Segoe UI Emoji") while the text stays
+     * in the normal theme font. Fixes emoji showing as blank boxes (□) on
+     * some Windows/JDK setups.
+     */
+    private JLabel fieldLabel(String emoji, String text) {
+        JLabel l = new JLabel(UITheme.iconText(emoji, text));
+        l.setFont(UITheme.SMALL_FONT);
+        l.setForeground(UITheme.TEXT_MUTED);
+        l.setAlignmentX(Component.LEFT_ALIGNMENT);
+        l.setBorder(BorderFactory.createEmptyBorder(0, 2, 4, 0));
+        return l;
+    }
 
     private JTextField styledTextField() {
         JTextField field = new JTextField();
