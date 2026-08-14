@@ -8,6 +8,7 @@ public class Service implements Creditable, Serializable {
     private String providerId;
     private boolean isAvailable;
 
+    
     public Service(String serviceId, String serviceType, String providerId) {
         this.serviceId = serviceId;
         this.serviceType = serviceType;
