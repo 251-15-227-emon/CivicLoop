@@ -123,12 +123,12 @@ public class LoginFrame extends JFrame {
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        panel.add(fieldLabel("User ID"));
+       panel.add(fieldLabel("🆔 User ID"));    
         userIdField = styledTextField();
         panel.add(userIdField);
         panel.add(Box.createVerticalStrut(14));
 
-        panel.add(fieldLabel("Password"));
+        panel.add(fieldLabel("🔒 Password"));
         passwordField = styledPasswordField();
         panel.add(passwordField);
         panel.add(Box.createVerticalStrut(26));
@@ -166,17 +166,17 @@ public class LoginFrame extends JFrame {
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        panel.add(fieldLabel("Full Name"));
+        panel.add(fieldLabel("🙍 Full Name"));
         nameField = styledTextField();
         panel.add(nameField);
         panel.add(Box.createVerticalStrut(12));
 
-        panel.add(fieldLabel("Area"));
+        panel.add(fieldLabel("📍 Area"));
         areaField = styledTextField();
         panel.add(areaField);
         panel.add(Box.createVerticalStrut(12));
 
-        panel.add(fieldLabel("Password"));
+        panel.add(fieldLabel("🔒 Password"));
         regPasswordField = styledPasswordField();
         panel.add(regPasswordField);
         panel.add(Box.createVerticalStrut(22));
