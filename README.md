@@ -23,21 +23,13 @@
 
 ## 📌 1. Project Overview
 
-### 🇧🇩 বাংলা পরিচিতি
+### 🇧🇩 Overview (পরিচিতি)
 
 **CivicLoop** হলো একটি hyperlocal community resource এবং skill-sharing desktop application। এর মূল ধারণা হলো—একজন ব্যবহারকারী তার প্রয়োজনীয় resource ধার নিতে পারে, অন্যকে কোনো service প্রদান করতে পারে এবং community-এর মধ্যে নিজের সময় ও দক্ষতার বিনিময়ে **TimeCredit** অর্জন করতে পারে।
 
-এই project-টি **Daffodil International University-এর CSE222: Object Oriented Programming Lab**-এর academic requirements-এর অংশ হিসেবে পাঁচজন শিক্ষার্থীর একটি team দ্বারা developed করা হয়েছে। এটি শুধুমাত্র একটি software project নয়; বরং Java-এর Object-Oriented Programming concepts বাস্তবে প্রয়োগ করার জন্য একটি শিক্ষামূলক implementation।
+এই project-টি **Daffodil International University-এর CSE222: Object Oriented Programming Lab**-এর academic requirements-এর অংশ হিসেবে পাঁচজন শিক্ষার্থীর একটি team দ্বারা developed করা হয়েছে। Projectটির মূল উদ্দেশ্য ছিল Java-এর **Object-Oriented Programming (OOP)** concepts-গুলোকে একটি practical desktop application-এর মাধ্যমে বাস্তবায়ন করা এবং theoretical knowledge-কে hands-on development experience-এর সঙ্গে সংযুক্ত করা।
 
 অ্যাপ্লিকেশনটি **Java SE, Java Swing এবং Java Serialization** ব্যবহার করে তৈরি করা হয়েছে। কোনো external database বা network backend-এর পরিবর্তে local serialized data file ব্যবহার করে application state সংরক্ষণ করা হয়েছে।
-
-### 🇬🇧 English Overview
-
-CivicLoop is a hyperlocal community platform where users can exchange physical resources, services, skills, and time.
-
-The central concept is a **TimeCredit economy**: users earn credits by helping others and spend those credits when receiving help or accessing community resources.
-
-The project was developed by a **five-member student team** as part of the **CSE222: Object Oriented Programming Lab**. Its primary educational objective was to demonstrate practical understanding of Java OOP principles, GUI development, file persistence, event-driven programming, and modular software design.
 
 ### 🎯 Core Technology Stack
 
@@ -61,7 +53,7 @@ The project was developed by a **five-member student team** as part of the **CSE
 | ⏱️ TimeCredit           | Earn, spend, and track credits                         | সাহায্যের বিনিময়ে credit অর্জন ও ব্যবহার        |
 | 📊 Transaction History  | Track TimeCredit transactions                          | credit-এর লেনদেনের history দেখা                 |
 | ⭐ Trust & Reputation    | Report and evaluate other users                        | user-এর trust/reputation সম্পর্কিত তথ্য         |
-| 📰 Community Feed       | Posts and comments                             | community post ও comment                 |
+| 📰 Community Feed       | Posts and comments                                     | community post ও comment                        |
 | 👤 Profile Management   | Edit name, area, bio, and skills                       | profile-এর নাম, এলাকা, bio ও skills পরিবর্তন    |
 | 🔄 Refresh Data         | Synchronize data across multiple open windows          | একাধিক window-এর data refresh/sync করা          |
 | 💾 Persistent Storage   | Save application data locally                          | application data local file-এ সংরক্ষণ           |
@@ -80,6 +72,58 @@ The project was developed by a **five-member student team** as part of the **CSE
 * 💾 **Persistent Data Using Serialization**
 
 ---
+
+## 🛠️ 3. Installation & Running
+
+### Prerequisites
+
+Before running CivicLoop, make sure the following are installed:
+
+* ☕ **JDK 21 or later**
+* 📦 **Apache Maven**
+* 🌐 **Git**
+* 💻 A Windows/Linux/macOS environment capable of running Java Swing
+
+Verify the installations:
+
+```bash
+java -version
+javac -version
+mvn -version
+git --version
+```
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/samiul796/CivicLoop
+cd CivicLoop
+```
+
+### Compile the Project
+
+```bash
+mvn clean compile
+```
+
+### Run the Application
+
+```bash
+mvn exec:java -Dexec.mainClass="civicloop.Main"
+```
+
+### 💾 Persistent Data
+
+CivicLoop stores application data in:
+
+```text
+civicloop_data.dat
+```
+
+This file contains serialized application state such as users, posts, items, services, transactions, and other persistent information.
+
+> **Note:** If the data file is deleted or becomes unavailable, previously stored local application data may no longer be accessible.
+
 ---
 
 ## 🖼️ 4. Application Screenshots
@@ -134,63 +178,7 @@ CivicLoop provides a desktop-based interface for managing community resources, u
 
 ---
 
----
-
-## 🛠️ 3. Installation & Running
-
-### Prerequisites
-
-Before running CivicLoop, make sure the following are installed:
-
-* ☕ **JDK 21 or later**
-* 📦 **Apache Maven**
-* 🌐 **Git**
-* 💻 A Windows/Linux/macOS environment capable of running Java Swing
-
-Verify the installations:
-
-```bash
-java -version
-javac -version
-mvn -version
-git --version
-```
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/samiul796/CivicLoop
-cd CivicLoop
-```
-
-### Compile the Project
-
-```bash
-mvn clean compile
-```
-
-### Run the Application
-
-```bash
-mvn exec:java -Dexec.mainClass="civicloop.Main"
-```
-
-
-### 💾 Persistent Data
-
-CivicLoop stores application data in:
-
-```text
-civicloop_data.dat
-```
-
-This file contains serialized application state such as users, posts, items, services, transactions, and other persistent information.
-
-> **Note:** If the data file is deleted or becomes unavailable, previously stored local application data may no longer be accessible.
-
----
-
-## 🖥️ 4. Usage Guide
+## 🖥️ 5. Usage Guide
 
 ### 🔐 Login / Registration
 
@@ -297,6 +285,7 @@ Users can:
 
 * 📝 Create posts
 * 💬 Comment
+* ❤️ Like posts
 * 📢 Share community-related information
 
 This creates a central communication space beyond resource and service exchange.
@@ -327,7 +316,7 @@ Latest data loaded
 
 ---
 
-## 🏗️ 5. Architecture & Design
+## 🏗️ 6. Architecture & Design
 
 CivicLoop follows a modular Java package structure intended to separate business models, persistence, and graphical interfaces.
 
@@ -366,9 +355,6 @@ CivicLoop/
 ├── pom.xml
 └── README.md
 ```
-
-
----
 
 ### 🧠 Object-Oriented Programming Concepts
 
@@ -476,7 +462,7 @@ This approach is appropriate for an educational desktop application where a full
 
 ---
 
-## 📐 6. Conceptual Class Diagram
+## 📐 7. Conceptual Class Diagram
 
 A simplified conceptual representation:
 
@@ -513,7 +499,7 @@ This diagram is intentionally simplified to communicate the main relationships r
 
 ---
 
-## ⚙️ 7. Challenges & Solutions
+## ⚙️ 8. Challenges & Solutions
 
 ### 🔄 Multi-window Synchronization
 
@@ -577,7 +563,7 @@ Instead, the project emphasizes:
 
 ---
 
-## 👥 8. Team & Acknowledgments
+## 👥 9. Team & Acknowledgments
 
 ### 🇧🇩 আমাদের টিম
 
@@ -591,130 +577,26 @@ CivicLoop তৈরি করা হয়েছে **CSE222: Object Oriented Progr
 | **Promit Mondol**            | `251-15-214`  | Feature Development                  |
 | **Anika Nishat**             | `251-15-355`  | Integration, Documentation & Testing |
 
-
-
-
 এই project-এর মাধ্যমে আমরা Java Swing, OOP design, file persistence, event-driven programming এবং team-based software development সম্পর্কে বাস্তব অভিজ্ঞতা অর্জন করেছি।
 
 ---
 
-## 🗺️ 9. Future Work & Roadmap
+## 🎓 10. Course & Instructor Information
 
-CivicLoop-এর ভবিষ্যৎ version-এ নিম্নলিখিত উন্নয়নগুলো যুক্ত করা যেতে পারে:
+| Information             | Details                                                |
+| ----------------------- | ------------------------------------------------------ |
+| 🏫 Institution          | **Daffodil International University**                  |
+| 💻 Department           | **Department of Computer Science & Engineering (CSE)** |
+| 📚 Course               | **CSE222 — Object Oriented Programming Lab**           |
+| 👨‍🏫 Course Instructor | **Md. Mezbaul Islam Zion**                                  |
+| 👥 Team Size            | **5 Students**                                         |
+| 🎯 Project Type         | **Academic / Educational Desktop Application**         |
 
-| Priority     | Enhancement                           |
-| ------------ | ------------------------------------- |
-| 🔴 High      | Database-backed persistent storage    |
-| 🔴 High      | Secure password hashing               |
-| 🟠 Medium    | Real-time synchronization             |
-| 🟠 Medium    | REST API / backend architecture       |
-| 🟠 Medium    | Advanced trust & reputation algorithm |
-| 🟡 Future    | Mobile application                    |
-| 🟡 Future    | Push notifications                    |
-| 🟡 Future    | Location-aware community discovery    |
-| 🟡 Future    | Admin moderation dashboard            |
-| 🟡 Future    | Analytics and community statistics    |
-| 🟢 Long-term | Cloud deployment                      |
-
-A possible future architecture could evolve into:
-
-```text
-                 ┌──────────────────┐
-                 │   Web / Mobile   │
-                 │     Clients      │
-                 └────────┬─────────┘
-                          │
-                          ▼
-                 ┌──────────────────┐
-                 │    REST API      │
-                 │     Backend      │
-                 └────────┬─────────┘
-                          │
-             ┌────────────┼────────────┐
-             ▼            ▼            ▼
-         PostgreSQL    Auth System   Real-time
-                                    Services
-```
+> 📝 **Instructor information will be updated here.**
 
 ---
 
-## 📜 10. License
-
-This project was developed primarily for **educational and academic purposes** as part of the CSE222 Object Oriented Programming Lab.
-
-Unless a separate license is added by the project owners:
-
-> **All rights reserved.**
-
-The project may be modified to use an open-source license such as **MIT License** if the team decides to publish the source code for broader reuse.
-
----
-
-## 📊 11. Project Snapshot
-
-| Category        | Details                       |
-| --------------- | ----------------------------- |
-| 🚀 Project      | CivicLoop                     |
-| 🎯 Domain       | Hyperlocal Community Exchange |
-| ☕ Language      | Java                          |
-| 🖥️ GUI         | Java Swing                    |
-| 📦 Build        | Maven                         |
-| 💾 Storage      | Java Serialization            |
-| 🧠 Architecture | OOP-based Modular Design      |
-| 👥 Team         | 5 Students                    |
-| 🎓 Course       | CSE222 OOP Lab                |
-| 🧪 Project Type | Academic Desktop Application  |
-| 📈 Status       | Beta / Educational            |
-
----
-
-## 🧪 12. Example Development Commands
-
-Clean the project:
-
-```bash
-mvn clean
-```
-
-Compile:
-
-```bash
-mvn clean compile
-```
-
-Package:
-
-```bash
-mvn package
-```
-
-Run:
-
-```bash
-mvn exec:java -Dexec.mainClass="civicloop.Main"
-```
-
-Check Java version:
-
-```bash
-java -version
-```
-
----
-
-## 🔐 13. Important Notes
-
-> ⚠️ **Local Storage:** CivicLoop currently uses local Java serialization rather than a production database.
-
-> ⚠️ **Security:** This academic implementation should not be considered production-ready authentication or security infrastructure.
-
-> 💡 **Data Synchronization:** If multiple application windows are open, use **Refresh Data** after changes made elsewhere.
-
-> 🎓 **Educational Scope:** The architecture intentionally prioritizes Java/OOP learning objectives over enterprise-level infrastructure.
-
----
-
-## 🌟 14. Why CivicLoop?
+## 🌟 11. Why CivicLoop?
 
 CivicLoop explores a simple question:
 
@@ -746,20 +628,46 @@ The result is a small-scale demonstration of how software can model real-world s
 
 ---
 
-## ❤️ 15. Acknowledgment
+## 📚 12. Project Resources & References
 
-Special acknowledgment is given to the course instructors, teammates, and everyone involved in the development and evaluation of this academic project.
+### 💾 Project Files & Demonstration Materials
 
-### 🇧🇩 শেষ কথা
+The complete project and related materials are available through the following Google Drive link:
 
-CivicLoop আমাদের জন্য শুধু একটি Java Swing application নয়—এটি Object-Oriented Programming-এর ধারণাগুলোকে একটি বাস্তব সমস্যার সঙ্গে যুক্ত করার একটি শিক্ষামূলক প্রচেষ্টা। Teamwork, debugging, UI design, data management এবং software architecture—প্রতিটি ধাপে project development আমাদের practical learning experience দিয়েছে।
+🔗 **[CivicLoop — Project Files & Resources](https://drive.google.com/file/d/1DViZgyhvstrKOMr0Bu3RjK1AhCJuMNFy/view?usp=sharing)**
+
+### 🔗 GitHub Repository
+
+**[github.com/samiul796/CivicLoop](https://github.com/samiul796/CivicLoop)**
+
+### 📖 Technical References
+
+The project was developed using standard Java and OOP concepts with reference to official documentation and educational resources, including:
+
+* [Oracle Java Documentation](https://docs.oracle.com/en/java/)
+* [Java Swing Documentation](https://docs.oracle.com/javase/tutorial/uiswing/)
+* [Apache Maven Documentation](https://maven.apache.org/guides/)
+* [GitHub Documentation](https://docs.github.com/)
+* [Java Serialization Documentation](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Serializable.html)
+
+> 📌 These references were used for understanding Java language features, Swing GUI development, Maven project management, persistence, and GitHub-based software development.
 
 ---
 
-## 🔗 16. Repository & Contact
+## ❤️ 13. Acknowledgment
+
+Special acknowledgment is given to the course instructor, teammates, and everyone involved in the development, testing, documentation, and evaluation of this academic project.
+
+We also appreciate the academic environment provided by **Daffodil International University** for enabling us to apply Object-Oriented Programming concepts in a practical software project.
+
+---
+
+## 🔗 14. Repository & Contact
 
 **GitHub Repository:**
-`https://github.com/samiul796/CivicLoop`
+https://github.com/samiul796/CivicLoop
+
+
 
 For project-related questions, contributions, or academic discussion, please refer to the project repository and its issue/discussion section.
 
