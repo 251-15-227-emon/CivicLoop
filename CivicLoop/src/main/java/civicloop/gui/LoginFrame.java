@@ -159,6 +159,7 @@ public class LoginFrame extends JFrame {
         wrap.add(panel, BorderLayout.NORTH);
         return wrap;
     }
+    
 
     // ---- Register form ----
     private JPanel createRegisterPanel() {
