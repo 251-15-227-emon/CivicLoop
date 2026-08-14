@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class DataStore implements Serializable {
 
     private HashMap<String, User> users;
@@ -333,6 +334,6 @@ public class DataStore implements Serializable {
         this.nextTransactionId = loaded.nextTransactionId;
         this.nextPostId = loaded.nextPostId;
 
-        
+
     }
 }
