@@ -22,7 +22,8 @@ public class TrustScoreManager implements Serializable {
     }
 
 
+
     public int getScore() { return score; }
     public String getUserId() { return userId; }
-    
+
 }
