@@ -8,6 +8,7 @@ public class Service implements Creditable, Serializable {
     private String providerId;
     private boolean isAvailable;
 
+    
     public Service(String serviceId, String serviceType, String providerId) {
         this.serviceId = serviceId;
         this.serviceType = serviceType;
@@ -17,6 +18,9 @@ public class Service implements Creditable, Serializable {
 
     @Override
     public double getCreditRate() { return 1.0; }
+    
+    
+    
     @Override
     public String getOfferType() { return "Service"; }
 

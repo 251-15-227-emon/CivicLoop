@@ -11,7 +11,7 @@ public class User implements Serializable {
     private String password;
     private int trustScore;
     private double timeCreditBalance;
-    private String bio;   // new
+    private String bio;  
 
     public User(String name, String area, String password, String userId) {
         this.userId = userId;
@@ -28,7 +28,6 @@ public class User implements Serializable {
         return this.password.equals(attempt);
     }
 
-    // Getters and setters (add new ones)
     public String getUserId() { return userId; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -43,3 +42,5 @@ public class User implements Serializable {
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }
 }
+
+
