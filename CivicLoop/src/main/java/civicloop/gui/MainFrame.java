@@ -105,7 +105,7 @@ public class MainFrame extends JFrame {
                     return;
                 }
                 refreshAll();
-                JOptionPane.showMessageDialog(this, "Data reloaded from disk successfully.", "Refresh", JOptionPane.INFORMATION_MESSAGE);
+                UITheme.showAutoDismissPopup(this, "✔ Data reloaded from disk successfully.");
             } catch (IOException | ClassNotFoundException ex) {
                 JOptionPane.showMessageDialog(this, "Failed to reload data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
