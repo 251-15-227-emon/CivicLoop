@@ -298,13 +298,8 @@ public class FeedPanel extends JPanel {
             return bg;
         }
 
-        /**
-         * Builds a compact comment bubble: a single header line with
-         * 👤 name #id  🕒 time (post-card style), then the comment text
-         * below. Parses the "id|timestamp|text" format written by
-         * DataStore.addCommentToPost(); falls back gracefully for older
-         * comments saved before the timestamp was added.
-         */
+     
+      
         private JComponent buildCommentBubble(String rawComment) {
             String commenterId, timestamp, text;
             String[] parts = rawComment.split("\\|", 3);

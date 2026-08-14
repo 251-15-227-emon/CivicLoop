@@ -245,6 +245,7 @@ public class ItemPanel extends JPanel {
 
     /** Rounded card background with subtle border, highlights on selection. */
     private static class CardBackground extends JPanel {
+        
         private final boolean selected;
         CardBackground(boolean selected) {
             this.selected = selected;
